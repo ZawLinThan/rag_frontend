@@ -4,7 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <meta name="theme-color" content="#1967d2" />
+    <meta
+      name="description"
+      content="Folio — a thoughtful workspace for your notes, questions, and learning."
+    />
+    <script>
+      (() => {
+        let theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+        try {
+          const saved = localStorage.getItem("folio-theme");
+          if (saved === "light" || saved === "dark") theme = saved;
+        } catch {}
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+    <title>Folio — Your study workspace</title>
   </head>
   <body>
     <div id="root"></div>

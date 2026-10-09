@@ -1,74 +1,50 @@
-# React + TypeScript + Vite
+# Folio — RAG study assistant frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript + Vite prototype with a responsive educational workspace.
 
-Currently, two official plugins are available:
+## Run
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```sh
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## Screens
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+- `/`: overview
+- `/courses` and `/courses/:courseId`: course creation, notebook creation, organized notes
+- `/documents` and `/documents/:documentId`: upload metadata, search, filters, sample previews
+- `/chat`: course, notebook, or file scoped sample answers with source links
+- `/flashcards`: reveal, review, and session completion
+- `/quizzes`: multiple-choice practice with feedback and scoring
+- `/settings`: prototype preferences, sign-out, sample workspace reset
+- `/login`, `/signup`, `/auth/callback`: Supabase email/password authentication with PKCE email confirmation
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+Study features use sample data. Course, notebook, and upload metadata persist in localStorage. Uploads do not store file bytes or extract document contents. Chat retrieves matching sample passages; it does not call an LLM. Flashcards and quizzes are curated samples. Profile preferences currently apply only within the settings screen. The demo workspace remains public regardless of authentication.
+
+## Supabase authentication
+
+Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in `.env` using `.env.example`. Enable email authentication, configure the site URL, and allow `http://localhost:5173/auth/callback` (or your actual development origin) and your production callback URL in Supabase Auth redirect settings. Email templates must use Supabase's confirmation URL so the PKCE redirect contains a code. Signup confirmation links must be opened in the same browser where authentication started.
+
+The singleton client uses `flowType: 'pkce'` and `detectSessionInUrl: true`, letting Supabase exchange the callback code once. The callback reads the resulting session and handles failed or expired links. Signup collects full name, email, password (at least 8 characters), and password confirmation. The full name is stored as `user_metadata.full_name`; password confirmation is validated locally and never sent to Supabase. Sign-in uses email and password. Signup redirects immediately when a session is returned; otherwise it asks the user to confirm their email.
+
+Reference: https://supabase.com/docs/guides/auth/sessions/pkce-flow
+
+## Structure and backend integration
+
+- `src/App.tsx`: routes only
+- `src/pages`: route entry points composing components
+- `src/components`: separate reusable TSX components
+- `src/hooks`: custom workspace/session hooks
+- `src/types`: ordinary application and component types
+- `src/zodSchema`: runtime schemas and their inferred types
+- `src/data`: validated sample workspace and practice content
+
+Replace workspace provider actions with API calls, wire ingestion into document uploads, replace sample passage matching with your RAG endpoint, and load generated practice content from your backend. Keep incoming responses validated with Zod. Add authenticated route protection when connecting private user data.
+
+## Verification
+
+```sh
+npm run build
+npm run lint
 ```
-# rag_frontend
