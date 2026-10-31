@@ -18,8 +18,24 @@ export function TimerProvider({
   userId: string;
   children: ReactNode;
 }) {
-  const [floatingHidden, setFloatingHidden] = useState(false);
   const storageKey = `folio:focus-timer:${userId}`;
+  const visibilityKey = `${storageKey}:hidden`;
+  const [floatingHidden, updateFloatingHidden] = useState(() => {
+    try {
+      return localStorage.getItem(visibilityKey) === "true";
+    } catch {
+      return false;
+    }
+  });
+  const setFloatingHidden = (hidden: boolean) => {
+    updateFloatingHidden(hidden);
+    try {
+      if (hidden) localStorage.setItem(visibilityKey, "true");
+      else localStorage.removeItem(visibilityKey);
+    } catch {
+      /* Keep visibility in memory when storage is unavailable. */
+    }
+  };
   const [timer, setTimer] = useState<TimerState>(() => {
     try {
       return refreshTimer(

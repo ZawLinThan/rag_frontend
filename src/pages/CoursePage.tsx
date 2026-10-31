@@ -1,3 +1,8 @@
+import { SortableCards, SortableCard } from "../components/SortableCards";
+import { useCardOrderStore } from "../stores/cardOrderStore";
+import { useAuthStore } from "../stores/authStore";
+import { reorderIds } from "../lib/reorder";
+import StudyRecordActions from "../components/StudyRecordActions";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
@@ -17,13 +22,37 @@ import Modal from "../components/Modal";
 const CoursePage = () => {
   const { courseId } = useParams();
   const data = useStudyData();
+  const userId = useAuthStore((state) => state.user?.id);
+  const { notebooks: notebookOrders, setNotebooks } = useCardOrderStore(
+    userId ?? "anonymous",
+  );
   const create = useStudyMutation(createNotebook);
   const [selected, setSelected] = useState("");
   const [name, setName] = useState("");
   const [creatingNotebook, setCreatingNotebook] = useState(false);
   const course = data.courses.find((item) => item.id === courseId);
   const notebookQuery = useQuery(studyQueries.courseNotebooks(courseId ?? ""));
-  const notebooks = notebookQuery.data ?? [];
+  const order = notebookOrders[courseId ?? ""] ?? [];
+  const notebooks = [...(notebookQuery.data ?? [])].sort((a, b) => {
+    const left = order.indexOf(a.id);
+    const right = order.indexOf(b.id);
+    return (
+      (left < 0 ? Number.MAX_SAFE_INTEGER : left) -
+      (right < 0 ? Number.MAX_SAFE_INTEGER : right)
+    );
+  });
+  const moveNotebook = (from: string, to: string) => {
+    setSelected(notebookId);
+    if (courseId)
+      setNotebooks(
+        courseId,
+        reorderIds(
+          notebooks.map((item) => item.id),
+          from,
+          to,
+        ),
+      );
+  };
   const notebookId = notebooks.some((notebook) => notebook.id === selected)
     ? selected
     : (notebooks[0]?.id ?? "");
@@ -135,27 +164,51 @@ const CoursePage = () => {
           </form>
         </Modal>
       )}
-      <div className="notebook-grid">
-        {notebooks.map((item) => (
-          <button
-            key={item.id}
-            aria-pressed={notebookId === item.id}
-            className={`panel notebook ${notebookId === item.id ? "selected" : ""}`}
-            onClick={() => setSelected(item.id)}
-          >
-            <FolderOpen size={25} />
-            <h3>{item.noteBookName}</h3>
-            <p>
-              {
-                data.documents.filter(
-                  (document) => document.notebookId === item.id,
-                ).length
-              }{" "}
-              documents
-            </p>
-          </button>
-        ))}
-      </div>
+      <SortableCards
+        ids={notebooks.map((item) => item.id)}
+        grid
+        onMove={moveNotebook}
+      >
+        <div className="notebook-grid">
+          {notebooks.map((item) => (
+            <SortableCard
+              className="notebook-tile"
+              key={item.id}
+              id={item.id}
+              label={item.noteBookName}
+            >
+              {(handle) => (
+                <>
+                  <button
+                    aria-pressed={notebookId === item.id}
+                    className={`panel notebook ${notebookId === item.id ? "selected" : ""}`}
+                    onClick={() => setSelected(item.id)}
+                  >
+                    <FolderOpen size={25} />
+                    <h3>{item.noteBookName}</h3>
+                    <p>
+                      {
+                        data.documents.filter(
+                          (document) => document.notebookId === item.id,
+                        ).length
+                      }{" "}
+                      documents
+                    </p>
+                  </button>
+                  <div className="notebook-tile-actions">
+                    {handle}
+                    <StudyRecordActions
+                      kind="notebook"
+                      id={item.id}
+                      name={item.noteBookName}
+                    />
+                  </div>
+                </>
+              )}
+            </SortableCard>
+          ))}
+        </div>
+      </SortableCards>
       {!notebooks.length ? (
         <p className="empty">
           Create a notebook to start adding documents to this course.

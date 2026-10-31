@@ -1,3 +1,4 @@
+import StudyRecordActions from "./StudyRecordActions";
 import { useCardOrderStore } from "../stores/cardOrderStore";
 import { SortableCards, SortableCard } from "./SortableCards";
 import { useAuthStore } from "../stores/authStore";
@@ -66,7 +67,14 @@ export default function CourseCardGrid({
                     ).length
                   }
                 />
-                <div className="course-order-controls">{handle}</div>
+                <div className="course-order-controls">
+                  <StudyRecordActions
+                    kind="course"
+                    id={course.id}
+                    name={course.name}
+                  />
+                  {handle}
+                </div>
               </>
             )}
           </SortableCard>

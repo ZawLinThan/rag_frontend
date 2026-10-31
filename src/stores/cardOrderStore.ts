@@ -5,6 +5,8 @@ import { createJSONStorage, persist } from "zustand/middleware";
 type OrderState = {
   courses: string[];
   cards: Record<string, string[]>;
+  notebooks: Record<string, string[]>;
+  setNotebooks: (courseId: string, ids: string[]) => void;
   setCourses: (ids: string[]) => void;
   setCards: (deckId: string, ids: string[]) => void;
 };
@@ -36,6 +38,11 @@ export function createCardOrderStore(accountId: string) {
                 ]),
               )
             : {},
+        notebooks: {},
+        setNotebooks: (courseId, notebooks) =>
+          set((state) => ({
+            notebooks: { ...state.notebooks, [courseId]: notebooks },
+          })),
         setCourses: (courses) => set({ courses }),
         setCards: (deckId, cards) =>
           set((state) => ({ cards: { ...state.cards, [deckId]: cards } })),
@@ -43,7 +50,11 @@ export function createCardOrderStore(accountId: string) {
       {
         name: `folio:card-orders:${accountId}`,
         storage: createJSONStorage(() => localStorage),
-        partialize: (state) => ({ courses: state.courses, cards: state.cards }),
+        partialize: (state) => ({
+          courses: state.courses,
+          cards: state.cards,
+          notebooks: state.notebooks,
+        }),
       },
     ),
   );

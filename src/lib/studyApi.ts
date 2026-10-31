@@ -506,3 +506,36 @@ export const deleteTest = async (id: string): Promise<void> => {
 export const getSampleExcerpt = (id: string) =>
   sampleWorkspace.documents.find((document) => document.id === id)?.content ??
   "This is a local upload placeholder. Document processing and answers will be available once the backend is connected.";
+
+export async function renameCourse({
+  id,
+  name,
+}: {
+  id: string;
+  name: string;
+}): Promise<Course> {
+  const { data } = await api.patch<Course>(
+    `/api/courses/${encodeURIComponent(id)}`,
+    { name },
+  );
+  return data;
+}
+export async function deleteCourse(id: string): Promise<void> {
+  await api.delete(`/api/courses/${encodeURIComponent(id)}`);
+}
+export async function editNotebook({
+  id,
+  noteBookName,
+}: {
+  id: string;
+  noteBookName: string;
+}): Promise<NoteBook> {
+  const { data } = await api.patch<NoteBook>(
+    `/api/notebooks/${encodeURIComponent(id)}`,
+    { noteBookName },
+  );
+  return data;
+}
+export async function deleteNotebook(id: string): Promise<void> {
+  await api.delete(`/api/notebooks/${encodeURIComponent(id)}`);
+}
