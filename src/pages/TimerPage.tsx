@@ -6,7 +6,6 @@ import {
   Pause,
   Play,
   RotateCcw,
-  Sparkles,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import PageHeading from "../components/PageHeading";
