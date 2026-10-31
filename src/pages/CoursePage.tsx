@@ -12,6 +12,7 @@ import PageHeading from "../components/PageHeading";
 import QueryState from "../components/QueryState";
 import DocumentList from "../components/DocumentList";
 import FileUpload from "../components/FileUpload";
+import Modal from "../components/Modal";
 
 const CoursePage = () => {
   const { courseId } = useParams();
@@ -19,6 +20,7 @@ const CoursePage = () => {
   const create = useStudyMutation(createNotebook);
   const [selected, setSelected] = useState("");
   const [name, setName] = useState("");
+  const [creatingNotebook, setCreatingNotebook] = useState(false);
   const course = data.courses.find((item) => item.id === courseId);
   const notebookQuery = useQuery(studyQueries.courseNotebooks(courseId ?? ""));
   const notebooks = notebookQuery.data ?? [];
@@ -66,41 +68,73 @@ const CoursePage = () => {
           </Link>
         }
       />
-      <form
-        className="inline-form"
-        onSubmit={(event) => {
-          event.preventDefault();
-          create.mutate(
-            { courseId: course.id, noteBookName: name },
-            {
-              onSuccess: (created) => {
-                setSelected(created.id);
-                setName("");
-              },
-            },
-          );
-        }}
-      >
-        <label>
-          New notebook
-          <input
-            required
-            maxLength={255}
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="e.g. Week 5 lecture notes"
-          />
-        </label>
-        <button className="button" disabled={create.isPending || !name.trim()}>
-          <Plus size={16} />
-          {create.isPending ? "Creating…" : "Create notebook"}
+      <div className="notebook-create-action">
+        <button
+          type="button"
+          className="button"
+          onClick={() => {
+            create.reset();
+            setCreatingNotebook(true);
+          }}
+        >
+          <Plus size={16} /> New notebook
         </button>
-        {create.error && (
-          <p className="error" role="alert">
-            {create.error.message}
-          </p>
-        )}
-      </form>
+      </div>
+      {creatingNotebook && (
+        <Modal
+          title="Create a notebook"
+          busy={create.isPending}
+          onClose={() => setCreatingNotebook(false)}
+        >
+          <form
+            className="inline-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              create.mutate(
+                { courseId: course.id, noteBookName: name },
+                {
+                  onSuccess: (created) => {
+                    setSelected(created.id);
+                    setName("");
+                    setCreatingNotebook(false);
+                  },
+                },
+              );
+            }}
+          >
+            <label>
+              New notebook
+              <input
+                required
+                maxLength={255}
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="e.g. Week 5 lecture notes"
+              />
+            </label>
+            <button
+              className="button"
+              disabled={create.isPending || !name.trim()}
+            >
+              <Plus size={16} />
+              {create.isPending ? "Creating…" : "Create notebook"}
+            </button>
+            <button
+              type="button"
+              className="button"
+              disabled={create.isPending}
+              onClick={() => setCreatingNotebook(false)}
+            >
+              Cancel
+            </button>
+            {create.error && (
+              <p className="error" role="alert">
+                {create.error.message}
+              </p>
+            )}
+          </form>
+        </Modal>
+      )}
       <div className="notebook-grid">
         {notebooks.map((item) => (
           <button

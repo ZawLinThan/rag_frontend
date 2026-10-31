@@ -5,6 +5,7 @@ import { createCourse } from "../lib/studyApi";
 import CourseCard from "../components/CourseCard";
 import PageHeading from "../components/PageHeading";
 import QueryState from "../components/QueryState";
+import Modal from "../components/Modal";
 
 const CoursesPage = () => {
   const data = useStudyData();
@@ -29,7 +30,7 @@ const CoursesPage = () => {
             className="button primary"
             onClick={() => {
               create.reset();
-              setCreating(!creating);
+              setCreating(true);
             }}
           >
             <Plus size={17} /> New course
@@ -37,71 +38,77 @@ const CoursesPage = () => {
         }
       />
       {creating && (
-        <form
-          className="panel inline-form"
-          onSubmit={(event) => {
-            event.preventDefault();
-            create.mutate(
-              { name, code: code || null, semester: semester || null },
-              {
-                onSuccess: () => {
-                  setName("");
-                  setCode("");
-                  setSemester("");
-                  setCreating(false);
-                },
-              },
-            );
-          }}
+        <Modal
+          title="Create a course"
+          busy={create.isPending}
+          onClose={() => setCreating(false)}
         >
-          <label>
-            Course name
-            <input
-              required
-              maxLength={255}
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder="e.g. Organic Chemistry"
-            />
-          </label>
-          <label>
-            Course code (optional)
-            <input
-              maxLength={50}
-              value={code}
-              onChange={(event) => setCode(event.target.value)}
-              placeholder="CHEM 201"
-            />
-          </label>
-          <label>
-            Semester (optional)
-            <input
-              maxLength={50}
-              value={semester}
-              onChange={(event) => setSemester(event.target.value)}
-              placeholder="Fall 2026"
-            />
-          </label>
-          <button
-            className="button primary"
-            disabled={create.isPending || !name.trim()}
+          <form
+            className="panel inline-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              create.mutate(
+                { name, code: code || null, semester: semester || null },
+                {
+                  onSuccess: () => {
+                    setName("");
+                    setCode("");
+                    setSemester("");
+                    setCreating(false);
+                  },
+                },
+              );
+            }}
           >
-            {create.isPending ? "Creating…" : "Create course"}
-          </button>
-          <button
-            type="button"
-            className="button"
-            disabled={create.isPending}
-            onClick={() => setCreating(false)}
-          >
-            Cancel
-          </button>
-          {create.error && (
-            <p className="error" role="alert">
-              {create.error.message}
-            </p>
-          )}
-        </form>
+            <label>
+              Course name
+              <input
+                required
+                maxLength={255}
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="e.g. Organic Chemistry"
+              />
+            </label>
+            <label>
+              Course code (optional)
+              <input
+                maxLength={50}
+                value={code}
+                onChange={(event) => setCode(event.target.value)}
+                placeholder="CHEM 201"
+              />
+            </label>
+            <label>
+              Semester (optional)
+              <input
+                maxLength={50}
+                value={semester}
+                onChange={(event) => setSemester(event.target.value)}
+                placeholder="Fall 2026"
+              />
+            </label>
+            <button
+              className="button primary"
+              disabled={create.isPending || !name.trim()}
+            >
+              {create.isPending ? "Creating…" : "Create course"}
+            </button>
+            <button
+              type="button"
+              className="button"
+              disabled={create.isPending}
+              onClick={() => setCreating(false)}
+            >
+              Cancel
+            </button>
+            {create.error && (
+              <p className="error" role="alert">
+                {create.error.message}
+              </p>
+            )}
+          </form>
+        </Modal>
       )}
       <QueryState
         pending={data.isPending}

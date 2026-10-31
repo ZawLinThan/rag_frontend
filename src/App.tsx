@@ -9,6 +9,7 @@ import ChatPage from "./pages/ChatPage";
 import FlashcardsPage from "./pages/FlashcardsPage";
 import TestsPage from "./pages/TestsPage";
 import SettingsPage from "./pages/SettingsPage";
+import TimerPage from "./pages/TimerPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import CallbackPage from "./pages/CallbackPage";
@@ -62,6 +63,7 @@ const App = () => {
         <Route path="chat" element={<ChatPage />} />
         <Route path="flashcards" element={<FlashcardsPage />} />
         <Route path="tests" element={<TestsPage />} />
+        <Route path="timer" element={<TimerPage />} />
         <Route path="quizzes" element={<Navigate to="/tests" replace />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />

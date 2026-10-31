@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useStudyMutation } from "../hooks/useStudyQueries";
 import { addFlashcard, updateFlashcard } from "../lib/studyApi";
 import type { Flashcard } from "../types";
+import Modal from "./Modal";
 
 const FlashcardEditor = ({
   setId,
@@ -21,54 +22,59 @@ const FlashcardEditor = ({
         : addFlashcard({ ...input, setId }),
   );
   return (
-    <form
-      className="fc-form"
-      onSubmit={(event) => {
-        event.preventDefault();
-        save.mutate({ front, back }, { onSuccess: onClose });
-      }}
+    <Modal
+      title={card ? "Edit card" : "New card"}
+      busy={save.isPending}
+      onClose={onClose}
     >
-      <h3>{card ? "Edit card" : "New card"}</h3>
-      <label>
-        Question
-        <textarea
-          required
-          maxLength={10000}
-          value={front}
-          onChange={(event) => setFront(event.target.value)}
-        />
-      </label>
-      <label>
-        Answer
-        <textarea
-          required
-          maxLength={10000}
-          value={back}
-          onChange={(event) => setBack(event.target.value)}
-        />
-      </label>
-      <div className="inline-actions">
-        <button
-          className="button primary"
-          disabled={save.isPending || !front.trim() || !back.trim()}
-        >
-          {save.isPending ? "Saving…" : "Save card"}
-        </button>
-        <button
-          type="button"
-          className="button"
-          disabled={save.isPending}
-          onClick={onClose}
-        >
-          Cancel
-        </button>
-      </div>
-      {save.error && (
-        <p className="error" role="alert">
-          {save.error.message}
-        </p>
-      )}
-    </form>
+      <form
+        className="fc-form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          save.mutate({ front, back }, { onSuccess: onClose });
+        }}
+      >
+        <label>
+          Question
+          <textarea
+            required
+            maxLength={10000}
+            value={front}
+            onChange={(event) => setFront(event.target.value)}
+          />
+        </label>
+        <label>
+          Answer
+          <textarea
+            required
+            maxLength={10000}
+            value={back}
+            onChange={(event) => setBack(event.target.value)}
+          />
+        </label>
+        <div className="inline-actions">
+          <button
+            className="button primary"
+            disabled={save.isPending || !front.trim() || !back.trim()}
+          >
+            {save.isPending ? "Saving…" : "Save card"}
+          </button>
+          <button
+            type="button"
+            className="button"
+            disabled={save.isPending}
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+        </div>
+        {save.error && (
+          <p className="error" role="alert">
+            {save.error.message}
+          </p>
+        )}
+      </form>
+    </Modal>
   );
 };
 
