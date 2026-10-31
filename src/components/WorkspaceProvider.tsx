@@ -53,7 +53,7 @@ const WorkspaceProvider = ({ children }: ChildrenProps) => {
               (notebook) => notebook.id === document.notebookId,
             )?.noteBookName ?? "Unassigned",
           size: formatFileSize(document.fileSize),
-          uploaded: document.r2Key.startsWith("samples/")
+          uploaded: document?.r2Key?.startsWith("samples/")
             ? "Sample material"
             : "Added locally",
           content: getSampleExcerpt(document.id),

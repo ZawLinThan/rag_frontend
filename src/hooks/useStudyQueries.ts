@@ -21,7 +21,10 @@ export const studyKeys = {
   all: ["study"] as const,
   courses: ["study", "courses"] as const,
   notebooks: ["study", "notebooks"] as const,
+  courseNotebooks: (id: string) => ["study", "course-notebooks", id] as const,
   documents: ["study", "documents"] as const,
+  notebookDocuments: (id: string) =>
+    ["study", "notebook-documents", id] as const,
   document: (id: string) => ["study", "document", id] as const,
   sets: ["study", "flashcard-sets"] as const,
   cards: (id: string) => ["study", "flashcards", id] as const,
@@ -34,6 +37,24 @@ export const studyQueries = {
     queryOptions({ queryKey: studyKeys.courses, queryFn: api.getCourses }),
   notebooks: () =>
     queryOptions({ queryKey: studyKeys.notebooks, queryFn: api.getNotebooks }),
+  courseNotebooks: (id: string) =>
+    queryOptions({
+      queryKey: studyKeys.courseNotebooks(id),
+      queryFn: () => api.getNotebooksByCourseId(id),
+      enabled: !!id,
+    }),
+  notebookDocuments: (id: string) =>
+    queryOptions({
+      queryKey: studyKeys.notebookDocuments(id),
+      queryFn: () => api.getDocumentsByNotebookId(id),
+      enabled: !!id,
+      refetchInterval: (query) =>
+        query.state.data?.some((document) =>
+          ["pending", "queued", "processing"].includes(document.status),
+        )
+          ? 2000
+          : false,
+    }),
   documents: () =>
     queryOptions({
       queryKey: studyKeys.documents,

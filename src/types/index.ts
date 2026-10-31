@@ -73,7 +73,6 @@ export type Test = {
 export type SuccessfulPresignedUrlResponse = {
   uploadUrl: string;
   key: string;
-  publicUrl: string;
   expiresIn: number;
 };
 
@@ -119,4 +118,4 @@ export type TestContent = {
 };
 
 export type UploadInput = { file: File; courseId: string; notebookId: string };
-export type UploadResult = { document: Document; publicUrl: string };
+export type UploadResult = { document: Document };

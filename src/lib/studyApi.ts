@@ -110,8 +110,8 @@ const requireText = (text: string, max: number, label: string) => {
  * @returns Raw Course[] response with no envelope.
  */
 export const getCourses = async (): Promise<Course[]> => {
-  // const { data } = await api.get<Course[]>(`/api/courses`);
-  // return data;
+  const { data } = await api.get<Course[]>(`/api/courses`);
+  return data;
 
   return response(courses);
 };
@@ -121,10 +121,8 @@ export const getCourses = async (): Promise<Course[]> => {
  * @returns Raw NoteBook[] response with no envelope.
  */
 export const getNotebooks = async (): Promise<NoteBook[]> => {
-  // const { data } = await api.get<NoteBook[]>(`/api/notebooks`);
-  // return data;
-
-  return response(notebooks);
+  const { data } = await api.get<NoteBook[]>(`/api/notebooks`);
+  return data;
 };
 
 /**
@@ -135,10 +133,10 @@ export const getNotebooks = async (): Promise<NoteBook[]> => {
 export const getNotebooksByCourseId = async (
   id: string,
 ): Promise<NoteBook[]> => {
-  // const { data } = await api.get<NoteBook[]>(`/api/notebooks`, { params: { courseId: id } });
-  // return data;
-
-  return response(notebooks.filter((item) => item.courseId === id));
+  const { data } = await api.get<NoteBook[]>(`/api/notebooks`, {
+    params: { courseId: id },
+  });
+  return data;
 };
 
 /**
@@ -146,10 +144,17 @@ export const getNotebooksByCourseId = async (
  * @returns Raw Document[] response with no envelope.
  */
 export const getDocuments = async (): Promise<Document[]> => {
-  // const { data } = await api.get<Document[]>(`/api/documents`);
-  // return data;
+  const { data } = await api.get<Document[]>(`/api/documents`);
+  return data;
+};
 
-  return response(documents);
+export const getDocumentsByNotebookId = async (
+  id: string,
+): Promise<Document[]> => {
+  const { data } = await api.get<Document[]>("/api/documents", {
+    params: { notebookId: id },
+  });
+  return data;
 };
 
 /**
@@ -158,12 +163,10 @@ export const getDocuments = async (): Promise<Document[]> => {
  * @returns Raw Document response with no envelope.
  */
 export const getDocumentById = async (id: string): Promise<Document> => {
-  // const { data } = await api.get<Document>(
-  //   `/api/documents/${encodeURIComponent(id)}`,
-  // );
-  // return data;
-
-  return response(requireRecord(documents, id, "Document"));
+  const { data } = await api.get<Document>(
+    `/api/documents/${encodeURIComponent(id)}`,
+  );
+  return data;
 };
 
 /**
@@ -174,8 +177,8 @@ export const getDocumentById = async (id: string): Promise<Document> => {
 export const createCourse = async (
   input: CreateCourseInput,
 ): Promise<Course> => {
-  // const { data } = await api.post<Course>("/api/courses", input);
-  // return data;
+  const { data } = await api.post<Course>("/api/courses", input);
+  return data;
 
   return null;
 };
@@ -188,6 +191,9 @@ export const createCourse = async (
 export const createNotebook = async (
   input: CreateNotebookInput,
 ): Promise<NoteBook> => {
+  const { data } = await api.post<NoteBook>("/api/notebooks", input);
+  return data;
+
   const name = requireText(input.noteBookName, 255, "Notebook name");
   if (
     notebooks.some(
@@ -198,9 +204,6 @@ export const createNotebook = async (
   ) {
     throw new Error("That notebook already exists in this course.");
   }
-  // const { data } = await api.post<NoteBook>("/api/notebooks", input);
-  // return data;
-
   return null;
 };
 
@@ -261,20 +264,19 @@ export const uploadDocument = async (
     throw error;
   }
 
-  // const res = await api.post<Document>("/api/documents/confirm", {
-  //   name: input.file.name,
-  //   originalName: input.file.name,
-  //   r2Key: signed.key,
-  //   fileType: input.file.type,
-  //   fileSize: input.file.size,
-  //   courseId: input.courseId,
-  //   notebookId: input.notebookId,
-  // });
-  // return { document: res.data, publicUrl: signed.publicUrl };
-
-  // to mimic the backend flow
-  // uncomment the above api endpoint call after implemented
-  return null;
+  const res = await api.post<{ documentId: string; status: string }>(
+    "/api/documents/confirm",
+    {
+      name: input.file.name,
+      originalName: input.file.name,
+      r2Key: signed.key,
+      fileType: input.file.type,
+      fileSize: input.file.size,
+      courseId: input.courseId,
+      notebookId: input.notebookId,
+    },
+  );
+  return { document: await getDocumentById(res.data.documentId) };
 };
 
 /**
@@ -289,11 +291,11 @@ export const renameDocument = async ({
   id: string;
   name: string;
 }): Promise<Document> => {
-  // const { data } = await api.patch<Document>(
-  //   `/api/documents/${encodeURIComponent(id)}`,
-  //   { name },
-  // );
-  // return data;
+  const { data } = await api.patch<Document>(
+    `/api/documents/${encodeURIComponent(id)}`,
+    { name },
+  );
+  return data;
 
   const document = requireRecord(documents, id, "Document");
   document.name = requireText(name, 255, "Document name");
@@ -307,8 +309,8 @@ export const renameDocument = async ({
  * @returns No body (204).
  */
 export const deleteDocument = async (id: string): Promise<void> => {
-  // await api.delete(`/api/documents/${encodeURIComponent(id)}`);
-  // return;
+  await api.delete(`/api/documents/${encodeURIComponent(id)}`);
+  return;
 };
 
 /**
@@ -414,6 +416,7 @@ export const deleteFlashcard = async ({
   //   `/api/flashcards/${encodeURIComponent(setId)}/cards/${encodeURIComponent(id)}`,
   // );
   // return;
+  console.log(setId, id); 
 };
 
 /**

@@ -1,7 +1,12 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { Sparkles, FolderOpen, ArrowLeft, Plus } from "lucide-react";
-import { useStudyData, useStudyMutation } from "../hooks/useStudyQueries";
+import {
+  studyQueries,
+  useStudyData,
+  useStudyMutation,
+} from "../hooks/useStudyQueries";
 import { createNotebook } from "../lib/studyApi";
 import PageHeading from "../components/PageHeading";
 import QueryState from "../components/QueryState";
@@ -15,20 +20,28 @@ const CoursePage = () => {
   const [selected, setSelected] = useState("");
   const [name, setName] = useState("");
   const course = data.courses.find((item) => item.id === courseId);
-  const notebooks = data.notebooks.filter(
-    (notebook) => notebook.courseId === courseId,
-  );
+  const notebookQuery = useQuery(studyQueries.courseNotebooks(courseId ?? ""));
+  const notebooks = notebookQuery.data ?? [];
   const notebookId = notebooks.some((notebook) => notebook.id === selected)
     ? selected
     : (notebooks[0]?.id ?? "");
   const notebook = notebooks.find((item) => item.id === notebookId);
+  const documentQuery = useQuery(studyQueries.notebookDocuments(notebookId));
 
-  if (data.isPending || data.error)
+  if (
+    data.isPending ||
+    data.error ||
+    notebookQuery.isLoading ||
+    notebookQuery.error
+  )
     return (
       <QueryState
-        pending={data.isPending}
-        error={data.error}
-        retry={data.refetch}
+        pending={data.isPending || notebookQuery.isLoading}
+        error={data.error ?? notebookQuery.error}
+        retry={() => {
+          void data.refetch();
+          void notebookQuery.refetch();
+        }}
       />
     );
 
@@ -137,13 +150,19 @@ const CoursePage = () => {
             courseId={course.id}
             notebookId={notebookId}
           />
-          <DocumentList
-            documents={data.documents.filter(
-              (document) => document.notebookId === notebookId,
-            )}
-            courses={data.courses}
-            notebooks={data.notebooks}
-          />
+          {documentQuery.isLoading || documentQuery.error ? (
+            <QueryState
+              pending={documentQuery.isLoading}
+              error={documentQuery.error}
+              retry={() => void documentQuery.refetch()}
+            />
+          ) : (
+            <DocumentList
+              documents={documentQuery.data ?? []}
+              courses={data.courses}
+              notebooks={notebooks}
+            />
+          )}
           <Link
             className="button"
             to={`/chat?course=${course.id}&notebook=${encodeURIComponent(notebook?.noteBookName ?? "")}`}
