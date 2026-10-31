@@ -1,8 +1,4 @@
-import {
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   initialTimer,
   parseTimerState,
@@ -22,6 +18,7 @@ export function TimerProvider({
   userId: string;
   children: ReactNode;
 }) {
+  const [floatingHidden, setFloatingHidden] = useState(false);
   const storageKey = `folio:focus-timer:${userId}`;
   const [timer, setTimer] = useState<TimerState>(() => {
     try {
@@ -63,6 +60,7 @@ export function TimerProvider({
     if (!Number.isInteger(minutes) || minutes < 1 || minutes > 240) return;
     const time = Date.now();
     setNow(time);
+    setFloatingHidden(false);
     setTimer(startTimer(minutes * 60_000, time));
   };
   const pause = () => setTimer((current) => pauseTimer(current, Date.now()));
@@ -75,6 +73,8 @@ export function TimerProvider({
   return (
     <TimerContext.Provider
       value={{
+        floatingHidden,
+        setFloatingHidden,
         timer,
         remainingMs: remainingTime(timer, now),
         start,

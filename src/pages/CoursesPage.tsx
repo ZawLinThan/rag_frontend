@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { useStudyData, useStudyMutation } from "../hooks/useStudyQueries";
 import { createCourse } from "../lib/studyApi";
-import CourseCard from "../components/CourseCard";
+import CourseCardGrid from "../components/CourseCardGrid";
 import PageHeading from "../components/PageHeading";
 import QueryState from "../components/QueryState";
 import Modal from "../components/Modal";
@@ -126,24 +126,12 @@ const CoursesPage = () => {
               placeholder="Search your courses…"
             />
           </div>
-          <div className="course-grid">
-            {visible.map((course) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                documentCount={
-                  data.documents.filter(
-                    (document) => document.courseId === course.id,
-                  ).length
-                }
-                notebookCount={
-                  data.notebooks.filter(
-                    (notebook) => notebook.courseId === course.id,
-                  ).length
-                }
-              />
-            ))}
-          </div>
+          <CourseCardGrid
+            courses={data.courses}
+            documents={data.documents}
+            notebooks={data.notebooks}
+            search={search}
+          />
           {!visible.length && (
             <p className="empty">
               {data.courses.length

@@ -1,7 +1,5 @@
-/**
- * JSON DTOs matching backend/src/db/schema.ts column names and nullability.
- * Drizzle timestamp values are Dates in the server; JSON serializes them as ISO
- * strings. No frontend-only fields are added to these database records.
+/** Frontend API types checked against contracts/study-api.d.ts.
+ * API timestamps are ISO strings. These types describe wire payloads, not database rows.
  */
 export type Course = {
   id: string;
