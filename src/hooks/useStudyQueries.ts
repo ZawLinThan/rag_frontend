@@ -62,7 +62,9 @@ export const studyQueries = {
       refetchInterval: (query) =>
         query.state.data?.some(
           (document) =>
-            document.status === "pending" || document.status === "processing",
+            document.status === "pending" ||
+            document.status === "queued" ||
+            document.status === "processing",
         )
           ? 2000
           : false,
@@ -74,6 +76,7 @@ export const studyQueries = {
       enabled: !!id,
       refetchInterval: (query) =>
         query.state.data?.status === "pending" ||
+        query.state.data?.status === "queued" ||
         query.state.data?.status === "processing"
           ? 2000
           : false,

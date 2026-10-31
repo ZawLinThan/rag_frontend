@@ -28,7 +28,7 @@ export type Document = {
   r2Key: string;
   fileType: string;
   fileSize: number;
-  status: "pending" | "processing" | "ready" | "failed";
+  status: "pending" | "queued" | "processing" | "ready" | "failed";
   errorMessage: string | null;
   courseId: string | null;
   notebookId: string | null;

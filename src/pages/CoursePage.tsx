@@ -165,7 +165,7 @@ const CoursePage = () => {
           )}
           <Link
             className="button"
-            to={`/chat?course=${course.id}&notebook=${encodeURIComponent(notebook?.noteBookName ?? "")}`}
+            to={`/chat?course=${course.id}&notebook=${encodeURIComponent(notebookId)}`}
           >
             Ask this notebook <Sparkles size={16} />
           </Link>
