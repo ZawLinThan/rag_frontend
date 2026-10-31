@@ -13,7 +13,7 @@ import { studyQueries, useStudyData } from "../hooks/useStudyQueries";
 import QueryState from "../components/QueryState";
 
 import { useAuthStore } from "../stores/authStore";
-import CourseCard from "../components/CourseCard";
+import CourseCardGrid from "../components/CourseCardGrid";
 import PageHeading from "../components/PageHeading";
 import { useQuery } from "@tanstack/react-query";
 
@@ -126,22 +126,12 @@ const OverviewPage = () => {
           View all courses <ArrowRight size={16} />
         </Link>
       </div>
-      <div className="course-grid">
-        {(courses ?? []).slice(0, 3).map((course) => (
-          <CourseCard
-            key={course.id}
-            course={course}
-            documentCount={
-              documents.filter((document) => document.courseId === course.id)
-                .length
-            }
-            notebookCount={
-              notebooks.filter((notebook) => notebook.courseId === course.id)
-                .length
-            }
-          />
-        ))}
-      </div>
+      <CourseCardGrid
+        courses={courses}
+        documents={documents}
+        notebooks={notebooks}
+        limit={3}
+      />
       <div className="dashboard-bottom">
         <section className="panel">
           <div className="section-heading">

@@ -18,7 +18,7 @@ async function docxText(blob: Blob): Promise<string> {
 
   const entries = view.getUint16(end + 10, true);
   let offset = view.getUint32(end + 16, true);
-  
+
   for (let i = 0; i < entries; i++) {
     if (view.getUint32(offset, true) !== 0x02014b50)
       throw new Error("Invalid DOCX archive");

@@ -18,7 +18,16 @@ const presets = [
   { minutes: 10, label: "Short break", description: "Take a breath" },
 ];
 export default function TimerPage() {
-  const { timer, remainingMs, start, pause, resume, reset } = useTimer();
+  const {
+    timer,
+    remainingMs,
+    start,
+    pause,
+    resume,
+    reset,
+    floatingHidden,
+    setFloatingHidden,
+  } = useTimer();
   const [minutes, setMinutes] = useState("25");
   const amount = Number(minutes);
   const valid = Number.isInteger(amount) && amount >= 1 && amount <= 240;
@@ -129,6 +138,15 @@ export default function TimerPage() {
               </button>
             )}
           </div>
+          {floatingHidden && !idle && (
+            <button
+              type="button"
+              className="button timer-show-floating"
+              onClick={() => setFloatingHidden(false)}
+            >
+              Show floating timer on other pages
+            </button>
+          )}
           <div className="timer-footer">
             <span>
               Your timer stays with you as you explore your workspace.

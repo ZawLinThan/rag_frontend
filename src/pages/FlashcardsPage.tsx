@@ -1,3 +1,5 @@
+import { useCardOrderStore } from "../stores/cardOrderStore";
+import { SortableCards, SortableCard } from "../components/SortableCards";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
@@ -12,6 +14,8 @@ import {
   Sparkles,
   Trash2,
 } from "lucide-react";
+import { useAuthStore } from "../stores/authStore";
+import { reorderIds } from "../lib/reorder";
 import {
   studyQueries,
   useStudyData,
@@ -80,6 +84,8 @@ const DeckTile = ({
 
 const FlashcardsPage = () => {
   const data = useStudyData();
+  const userId = useAuthStore((state) => state.user?.id);
+  const { cards: orders, setCards } = useCardOrderStore(userId ?? "anonymous");
   const sets = useQuery(studyQueries.sets());
   const [params] = useSearchParams();
   const [filter, setFilter] = useState(params.get("course") ?? "");
@@ -104,6 +110,21 @@ const FlashcardsPage = () => {
   const removeDeck = useStudyMutation(deleteFlashcardSet);
   const removeCard = useStudyMutation(deleteFlashcard);
   const selected = sets.data?.find((set) => set.id === selectedId);
+  const orderedCards = [...(cardQuery.data ?? [])].sort((a, b) => {
+    const ids = Array.isArray(orders[selectedId]) ? orders[selectedId] : [];
+    const aIndex = ids.indexOf(a.id);
+    const bIndex = ids.indexOf(b.id);
+    return (
+      (aIndex < 0 ? Number.MAX_SAFE_INTEGER : aIndex) -
+      (bIndex < 0 ? Number.MAX_SAFE_INTEGER : bIndex)
+    );
+  });
+  const moveCard = (sourceId: string, targetId: string) => {
+    const current = orderedCards.map((card) => card.id);
+    const ids = reorderIds(current, sourceId, targetId);
+    if (ids === current) return;
+    setCards(selectedId, ids);
+  };
   const visible = (sets.data ?? []).filter(
     (set) =>
       (!filter || set.courseId === filter) &&
@@ -410,7 +431,7 @@ const FlashcardsPage = () => {
               (reviewing ? (
                 <FlashcardReview
                   key={`${selected.id}-${reviewRound}`}
-                  cards={cardQuery.data}
+                  cards={orderedCards}
                 />
               ) : (
                 <>
@@ -428,34 +449,49 @@ const FlashcardsPage = () => {
                       onClose={() => setEditor(null)}
                     />
                   )}
-                  {cardQuery.data.map((card, index) => (
-                    <article className="fc-card-row" key={card.id}>
-                      <div>
-                        <span className="fc-label">Card {index + 1}</span>
-                        <h3>{card.front}</h3>
-                        <p>{card.back}</p>
-                      </div>
-                      <div className="inline-actions">
-                        <button
-                          className="icon-button"
-                          aria-label={`Edit card ${index + 1}`}
-                          onClick={() => setEditor(card)}
-                        >
-                          <Pencil size={17} />
-                        </button>
-                        <button
-                          className="icon-button fc-danger"
-                          aria-label={`Delete card ${index + 1}`}
-                          onClick={() => {
-                            removeCard.reset();
-                            setConfirm({ kind: "card", id: card.id });
-                          }}
-                        >
-                          <Trash2 size={17} />
-                        </button>
-                      </div>
-                    </article>
-                  ))}
+                  <SortableCards
+                    ids={orderedCards.map((card) => card.id)}
+                    onMove={moveCard}
+                  >
+                    {orderedCards.map((card, index) => (
+                      <SortableCard
+                        id={card.id}
+                        label={`card ${index + 1}`}
+                        className="fc-card-row"
+                        key={card.id}
+                      >
+                        {(handle) => (
+                          <>
+                            <div className="card-order-controls">{handle}</div>
+                            <div>
+                              <span className="fc-label">Card {index + 1}</span>
+                              <h3>{card.front}</h3>
+                              <p>{card.back}</p>
+                            </div>
+                            <div className="inline-actions">
+                              <button
+                                className="icon-button"
+                                aria-label={`Edit card ${index + 1}`}
+                                onClick={() => setEditor(card)}
+                              >
+                                <Pencil size={17} />
+                              </button>
+                              <button
+                                className="icon-button fc-danger"
+                                aria-label={`Delete card ${index + 1}`}
+                                onClick={() => {
+                                  removeCard.reset();
+                                  setConfirm({ kind: "card", id: card.id });
+                                }}
+                              >
+                                <Trash2 size={17} />
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </SortableCard>
+                    ))}
+                  </SortableCards>
                   {!cardQuery.data.length && (
                     <p className="fc-note">
                       Add your first question and answer to start practicing.
