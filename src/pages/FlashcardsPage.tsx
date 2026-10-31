@@ -27,6 +27,7 @@ import PageHeading from "../components/PageHeading";
 import QueryState from "../components/QueryState";
 import FlashcardReview from "../components/FlashcardReview";
 import FlashcardEditor from "../components/FlashcardEditor";
+import Modal from "../components/Modal";
 import type { Flashcard, FlashcardSet } from "../types";
 
 const DeckTile = ({
@@ -135,7 +136,7 @@ const FlashcardsPage = () => {
             onClick={() => {
               create.reset();
               generate.reset();
-              setCreating(!creating);
+              setCreating(true);
             }}
           >
             <Plus size={16} /> Create deck
@@ -151,149 +152,154 @@ const FlashcardsPage = () => {
         }}
       />
       {creating && (
-        <form
-          className="fc-form"
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (mode === "manual")
-              create.mutate(
-                { title, courseId: courseId || null },
-                { onSuccess: created },
-              );
-            else
-              generate.mutate(
-                { title, courseId, documentId, count },
-                { onSuccess: created },
-              );
-          }}
+        <Modal
+          title="Create a study deck"
+          busy={saving}
+          onClose={() => setCreating(false)}
         >
-          <h2>Create a study deck</h2>
-          <div
-            className="mode-options"
-            role="group"
-            aria-label="Deck creation mode"
+          <form
+            className="fc-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (mode === "manual")
+                create.mutate(
+                  { title, courseId: courseId || null },
+                  { onSuccess: created },
+                );
+              else
+                generate.mutate(
+                  { title, courseId, documentId, count },
+                  { onSuccess: created },
+                );
+            }}
           >
-            <button
-              type="button"
-              className={`button ${mode === "manual" ? "primary" : ""}`}
-              disabled={saving}
-              aria-pressed={mode === "manual"}
-              onClick={() => {
-                setMode("manual");
-                create.reset();
-                generate.reset();
-              }}
+            <div
+              className="mode-options"
+              role="group"
+              aria-label="Deck creation mode"
             >
-              <Pencil size={16} /> Write my own
-            </button>
-            <button
-              type="button"
-              className={`button ${mode === "ai" ? "primary" : ""}`}
-              disabled={saving}
-              aria-pressed={mode === "ai"}
-              onClick={() => {
-                setMode("ai");
-                create.reset();
-                generate.reset();
-              }}
-            >
-              <Sparkles size={16} /> Generate from notes
-            </button>
-          </div>
-          <label>
-            Deck title
-            <input
-              required
-              maxLength={255}
-              value={title}
-              disabled={saving}
-              onChange={(event) => setTitle(event.target.value)}
-              placeholder="e.g. Cell biology · Week 1"
-            />
-          </label>
-          <label>
-            Course{mode === "manual" ? " (optional)" : ""}
-            <select
-              required={mode === "ai"}
-              value={courseId}
-              disabled={saving}
-              onChange={(event) => {
-                setCourseId(event.target.value);
-                setDocumentId("");
-              }}
-            >
-              <option value="">
-                {mode === "manual" ? "Unassigned" : "Select a course"}
-              </option>
-              {data.courses.map((course) => (
-                <option key={course.id} value={course.id}>
-                  {course.name}
+              <button
+                type="button"
+                className={`button ${mode === "manual" ? "primary" : ""}`}
+                disabled={saving}
+                aria-pressed={mode === "manual"}
+                onClick={() => {
+                  setMode("manual");
+                  create.reset();
+                  generate.reset();
+                }}
+              >
+                <Pencil size={16} /> Write my own
+              </button>
+              <button
+                type="button"
+                className={`button ${mode === "ai" ? "primary" : ""}`}
+                disabled={saving}
+                aria-pressed={mode === "ai"}
+                onClick={() => {
+                  setMode("ai");
+                  create.reset();
+                  generate.reset();
+                }}
+              >
+                <Sparkles size={16} /> Generate from notes
+              </button>
+            </div>
+            <label>
+              Deck title
+              <input
+                required
+                maxLength={255}
+                value={title}
+                disabled={saving}
+                onChange={(event) => setTitle(event.target.value)}
+                placeholder="e.g. Cell biology · Week 1"
+              />
+            </label>
+            <label>
+              Course{mode === "manual" ? " (optional)" : ""}
+              <select
+                required={mode === "ai"}
+                value={courseId}
+                disabled={saving}
+                onChange={(event) => {
+                  setCourseId(event.target.value);
+                  setDocumentId("");
+                }}
+              >
+                <option value="">
+                  {mode === "manual" ? "Unassigned" : "Select a course"}
                 </option>
-              ))}
-            </select>
-          </label>
-          {mode === "ai" && (
-            <>
-              <label>
-                Source document
-                <select
-                  required
-                  value={documentId}
-                  disabled={saving || !courseId}
-                  onChange={(event) => setDocumentId(event.target.value)}
-                >
-                  <option value="">Select ready notes</option>
-                  {readyDocuments.map((document) => (
-                    <option key={document.id} value={document.id}>
-                      {document.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Number of cards
-                <input
-                  required
-                  type="number"
-                  min={1}
-                  max={20}
-                  value={count}
-                  disabled={saving}
-                  onChange={(event) => setCount(Number(event.target.value))}
-                />
-              </label>
-              <p className="fc-note">
-                Only documents marked ready can be used. Sample generation
-                demonstrates the workflow without analyzing files.
-              </p>
-            </>
-          )}
-          <div className="inline-actions">
-            <button
-              className="button primary"
-              disabled={
-                saving ||
-                !title.trim() ||
-                (mode === "ai" && (!documentId || !courseId))
-              }
-            >
-              {saving
-                ? "Creating…"
-                : mode === "ai"
-                  ? "Generate deck"
-                  : "Create deck"}
-            </button>
-            <button
-              type="button"
-              className="button"
-              disabled={saving}
-              onClick={() => setCreating(false)}
-            >
-              Cancel
-            </button>
-          </div>
-          <QueryState error={create.error ?? generate.error} />
-        </form>
+                {data.courses.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {mode === "ai" && (
+              <>
+                <label>
+                  Source document
+                  <select
+                    required
+                    value={documentId}
+                    disabled={saving || !courseId}
+                    onChange={(event) => setDocumentId(event.target.value)}
+                  >
+                    <option value="">Select ready notes</option>
+                    {readyDocuments.map((document) => (
+                      <option key={document.id} value={document.id}>
+                        {document.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Number of cards
+                  <input
+                    required
+                    type="number"
+                    min={1}
+                    max={20}
+                    value={count}
+                    disabled={saving}
+                    onChange={(event) => setCount(Number(event.target.value))}
+                  />
+                </label>
+                <p className="fc-note">
+                  Only documents marked ready can be used. Sample generation
+                  demonstrates the workflow without analyzing files.
+                </p>
+              </>
+            )}
+            <div className="inline-actions">
+              <button
+                className="button primary"
+                disabled={
+                  saving ||
+                  !title.trim() ||
+                  (mode === "ai" && (!documentId || !courseId))
+                }
+              >
+                {saving
+                  ? "Creating…"
+                  : mode === "ai"
+                    ? "Generate deck"
+                    : "Create deck"}
+              </button>
+              <button
+                type="button"
+                className="button"
+                disabled={saving}
+                onClick={() => setCreating(false)}
+              >
+                Cancel
+              </button>
+            </div>
+            <QueryState error={create.error ?? generate.error} />
+          </form>
+        </Modal>
       )}
       {!data.isPending &&
         !sets.isPending &&
