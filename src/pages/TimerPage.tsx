@@ -131,7 +131,6 @@ export default function TimerPage() {
             )}
           </div>
           <div className="timer-footer">
-            <Sparkles size={15} />
             <span>
               Your timer stays with you as you explore your workspace.
             </span>

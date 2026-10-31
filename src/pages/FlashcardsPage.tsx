@@ -307,7 +307,7 @@ const FlashcardsPage = () => {
         !sets.error &&
         (!selected ? (
           <>
-            <div className="fc-tools">
+            <div className="toolbar">
               <div className="search-field">
                 <Search size={18} />
                 <input
