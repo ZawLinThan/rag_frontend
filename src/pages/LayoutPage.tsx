@@ -15,6 +15,7 @@ import { getNameInitials } from "../lib/utils";
 import Brand from "../components/Brand";
 import FloatingTimer from "../components/FloatingTimer";
 import { TimerProvider } from "../context/TimerContext";
+import "../timer.css";
 
 const navigation = [
   { to: "/", label: "Overview", icon: LayoutDashboard },
