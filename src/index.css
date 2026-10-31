@@ -2758,7 +2758,7 @@ footer {
   align-items: center;
   gap: 2px;
 }
-.course-order-controls button,
+.course-order-controls > button,
 .card-order-controls button,
 .card-drag-handle {
   display: inline-grid;
@@ -2770,7 +2770,7 @@ footer {
   color: var(--muted);
   background: var(--surface);
 }
-.course-order-controls button:hover:not(:disabled),
+.course-order-controls > button:hover:not(:disabled),
 .card-order-controls button:hover:not(:disabled),
 .card-drag-handle:hover {
   color: var(--blue);
@@ -2803,3 +2803,15 @@ footer {
     transition: none !important;
   }
 }
+.record-actions { display: inline-flex; align-items: center; gap: 3px; }
+.record-actions .icon-button { width: 30px; height: 30px; }
+.notebook-tile { position: relative; min-width: 0; }
+.notebook-tile > .notebook { width: 100%; height: 100%; padding-bottom: 45px; }
+.notebook-tile > .record-actions { position: absolute; bottom: 10px; right: 12px; }
+
+.notebook-tile-actions { display: flex; align-items: center; gap: 4px; position: absolute; right: 12px; bottom: 10px; }
+.notebook-tile.is-sorting { z-index: 2; opacity: .85; }
+.creation-modal .record-modal-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; width: 100%; }
+.creation-modal .record-modal-actions .button { width: auto; height: auto; min-height: 40px; padding: 10px 16px; white-space: nowrap; }
+
+.creation-modal .record-edit-form input { border: 1px solid var(--border); border-radius: 8px; }
