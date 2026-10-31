@@ -11,6 +11,7 @@ import { renameDocument } from "../lib/studyApi";
 import { formatFileSize } from "../lib/utils";
 import PageHeading from "../components/PageHeading";
 import QueryState from "../components/QueryState";
+import DocumentPreview from "../components/DocumentPreview";
 
 const DocumentPage = () => {
   const { documentId = "" } = useParams();
@@ -56,12 +57,7 @@ const DocumentPage = () => {
           </p>
         )}
         <p>Added {new Date(document.createdAt).toLocaleDateString()}</p>
-        {/* Backend Document has no public URL or extracted content field. Do not
-          invent a PDF preview URL from r2Key; a signed read endpoint is needed. */}
-        <div className="notice">
-          Document previews will be available when a file-reading service is
-          connected.
-        </div>
+        <DocumentPreview document={document} />
         <div className="inline-actions">
           <button
             className="button"

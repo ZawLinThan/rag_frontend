@@ -169,6 +169,14 @@ export const getDocumentById = async (id: string): Promise<Document> => {
   return data;
 };
 
+export const getDocumentFile = async (id: string): Promise<Blob> => {
+  const { data } = await api.get<Blob>(
+    `/api/documents/${encodeURIComponent(id)}/file`,
+    { responseType: "blob" },
+  );
+  return data;
+};
+
 /**
  * Create a course and return the persisted record.
  * @param input - Name, optional code, and semester.
@@ -416,7 +424,7 @@ export const deleteFlashcard = async ({
   //   `/api/flashcards/${encodeURIComponent(setId)}/cards/${encodeURIComponent(id)}`,
   // );
   // return;
-  console.log(setId, id); 
+  console.log(setId, id);
 };
 
 /**
