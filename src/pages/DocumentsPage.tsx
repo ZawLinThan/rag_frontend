@@ -83,7 +83,7 @@ const DocumentsPage = () => {
             documents={data.documents.filter(
               (document) =>
                 (!filter || document.courseId === filter) &&
-                document.name.toLowerCase().includes(search.toLowerCase()),
+                document?.name?.toLowerCase().includes(search.toLowerCase()),
             )}
             courses={data.courses}
             notebooks={data.notebooks}
