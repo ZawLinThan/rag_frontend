@@ -7,6 +7,9 @@ import {
   Plus,
   PanelLeftOpen,
   PanelLeftClose,
+  BookOpen,
+  ArrowUpRight,
+  Layers3,
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useStudyData } from "../hooks/useStudyQueries";
@@ -21,6 +24,8 @@ import { readyDocumentsInScope } from "../lib/chatScope";
 import { questionSchema } from "../zodSchema/studySchema";
 import PageHeading from "../components/PageHeading";
 import QueryState from "../components/QueryState";
+import { useAuthStore } from "../stores/authStore";
+import { getNameInitials } from "../lib/utils";
 
 type ChatMessage = {
   id: string;
@@ -32,6 +37,7 @@ type Session = { id: string; scope: string };
 
 const ChatPage = () => {
   const data = useStudyData();
+  const user = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
   const history = useQuery({
     queryKey: ["study", "chat-sessions"],
@@ -189,30 +195,16 @@ const ChatPage = () => {
     );
 
   return (
-    <>
+    <div className="study-assistant">
       <PageHeading
         title="Study assistant"
-        description="Explore ideas with answers grounded in the notes you choose."
+        description="A little more clarity, one question at a time."
         action={
           <button className="button" disabled={busy} onClick={reset}>
             <Plus size={16} /> New conversation
           </button>
         }
       />
-      <div className="chat-history-controls">
-        <button
-          className="button"
-          aria-expanded={historyOpen}
-          aria-controls="chat-history"
-          onClick={() => setHistoryOpen((open) => !open)}
-        >
-          {historyOpen ? (
-            <PanelLeftClose size={16} />
-          ) : (
-            <PanelLeftOpen size={16} />
-          )}{" "}
-        </button>
-      </div>
       <div
         className={`chat-history-layout ${historyOpen ? "history-open" : ""}`}
       >
@@ -223,7 +215,21 @@ const ChatPage = () => {
           aria-hidden={!historyOpen}
           inert={!historyOpen}
         >
-          <h3>Chat history</h3>
+          <div className="history-heading">
+            <div>
+              <span className="assistant-kicker">YOUR WORKSPACE</span>
+              <h3>Conversations</h3>
+            </div>
+            <button
+              className="history-close-button"
+              type="button"
+              aria-label="Close chat history"
+              onClick={() => setHistoryOpen(false)}
+            >
+              <PanelLeftClose size={18} />
+            </button>
+          </div>
+          <p className="history-intro">Pick up where you left off.</p>
           {history.isPending && <p>Loading conversations…</p>}
           {history.error && (
             <p className="error" role="alert">
@@ -262,9 +268,21 @@ const ChatPage = () => {
         <div className="chat-layout">
           <section className="panel chat-panel">
             <div className="chat-scope">
-              <Sparkles size={17} />
-              <span>
-                Studying{" "}
+              <button
+                className="history-toggle"
+                type="button"
+                aria-expanded={historyOpen}
+                aria-controls="chat-history"
+                aria-label="Open chat history"
+                onClick={() => setHistoryOpen(true)}
+              >
+                <PanelLeftOpen size={17} />
+              </button>
+              <span className="scope-icon">
+                <Sparkles size={17} />
+              </span>
+              <span className="scope-copy">
+                <span className="assistant-kicker">CURRENT CONVERSATION</span>
                 <strong>
                   {restoredIds !== null
                     ? "saved conversation"
@@ -277,26 +295,78 @@ const ChatPage = () => {
                             ?.name || "your notes"}
                 </strong>
               </span>
+              <span className="scope-count">{sources.length} ready</span>
             </div>
             <div className="chat-messages" aria-live="polite">
               {messages.length === 0 ? (
                 <div className="chat-welcome">
-                  <span className="large-spark">
-                    <Sparkles size={30} />
+                  <span className="welcome-orbit">
+                    <span className="large-spark">
+                      <Sparkles size={28} />
+                    </span>
                   </span>
-                  <h2>Let’s make it click.</h2>
-                  <p>Ask a question about your ready documents.</p>
+                  <span className="assistant-kicker">YOUR STUDY COMPANION</span>
+                  <h2>
+                    {sources.length
+                      ? "What are you curious about?"
+                      : "Good questions start here."}
+                  </h2>
+                  <p>
+                    {sources.length
+                      ? "Ask anything about your selected notes. Your assistant will find relevant passages to guide the answer."
+                      : "Choose a course and add documents to get started. Once processing is complete, your notes will be ready to explore here."}
+                  </p>
+                  {sources.length ? (
+                    <div
+                      className="assistant-prompts"
+                      aria-label="Suggested questions"
+                    >
+                      {[
+                        "Summarize the key ideas",
+                        "Explain a difficult concept",
+                        "Help me prepare for a test",
+                      ].map((prompt) => (
+                        <button
+                          type="button"
+                          key={prompt}
+                          disabled={busy}
+                          onClick={() => setQuestion(prompt)}
+                        >
+                          {prompt}
+                          <ArrowUpRight size={15} />
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <Link className="assistant-upload-link" to="/documents">
+                      <BookOpen size={16} /> Go to my documents{" "}
+                      <ArrowUpRight size={15} />
+                    </Link>
+                  )}
                 </div>
               ) : (
                 messages.map((message) => (
-                  <div className={`message ${message.role}`} key={message.id}>
-                    <span className="message-avatar">
-                      {message.role === "user" ? "You" : <Sparkles size={16} />}
+                  <div
+                    className={`message ${message.role}`}
+                    key={message.id}
+                    aria-label={
+                      message.role === "user"
+                        ? "Your message"
+                        : "Assistant message"
+                    }
+                  >
+                    <span className="message-avatar" aria-hidden="true">
+                      {message.role === "user" ? (
+                        getNameInitials(
+                          user?.user_metadata?.full_name ||
+                            user?.email ||
+                            "Student",
+                        ).slice(0, 2)
+                      ) : (
+                        <Sparkles size={16} />
+                      )}
                     </span>
-                    <div>
-                      <strong>
-                        {message.role === "user" ? "You" : "Folio"}
-                      </strong>
+                    <div className="message-content">
                       <p>{message.text}</p>
                       {message.sources?.map((source) => (
                         <Link
@@ -340,13 +410,24 @@ const ChatPage = () => {
                 onChange={(event) => setQuestion(event.target.value)}
                 rows={2}
                 disabled={busy || !sources.length}
+                onKeyDown={(event) => {
+                  if (
+                    event.key === "Enter" &&
+                    !event.shiftKey &&
+                    !event.nativeEvent.isComposing
+                  ) {
+                    event.preventDefault();
+                    if (question.trim() && !busy && sources.length)
+                      void ask(question);
+                  }
+                }}
               />
               <button
                 className="button primary"
                 aria-label="Send question"
                 disabled={busy || !sources.length || !question.trim()}
               >
-                <Send size={18} />
+                <Send size={17} /> <span>Send</span>
               </button>
             </form>
             {error && (
@@ -355,13 +436,21 @@ const ChatPage = () => {
               </p>
             )}
             <p className="chat-disclaimer">
-              Answers are based on selected ready documents. Check the cited
-              sources.
+              Answers use your selected notes · Enter to send, Shift + Enter for
+              a new line
             </p>
           </section>
           <aside className="panel source-panel">
-            <h3>Your sources</h3>
-            <p>Choose what your conversation draws from.</p>
+            <div className="sources-heading">
+              <span className="sources-heading-icon">
+                <Layers3 size={18} />
+              </span>
+              <div>
+                <span className="assistant-kicker">STUDY MATERIAL</span>
+                <h3>Your sources</h3>
+              </div>
+            </div>
+            <p>Choose the notes your assistant should use.</p>
             {restoredIds !== null && (
               <div className="notice chat-restored-notice">
                 This conversation uses its original {restoredIds.length}{" "}
@@ -434,24 +523,43 @@ const ChatPage = () => {
               </select>
             </label>
             <div className="source-list">
-              <span className="eyebrow">{sources.length} READY DOCUMENTS</span>
-              {sources.map((item) => (
-                <Link key={item.id} to={`/documents/${item.id}`}>
-                  <FileText size={16} />
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-            {!sources.length && (
-              <div className="notice">
-                No ready documents in this selection. Documents become available
-                here after processing is complete.
+              <div className="sources-list-heading">
+                <span className="assistant-kicker">READY TO SEARCH</span>
+                <span>{sources.length}</span>
               </div>
-            )}
+              <div
+                className="source-list-scroll"
+                role="region"
+                aria-label="Ready documents"
+                tabIndex={0}
+              >
+                {sources.map((item) => (
+                  <Link key={item.id} to={`/documents/${item.id}`}>
+                    <span className="source-file-icon">
+                      <FileText size={16} />
+                    </span>
+                    <span className="source-file-name">
+                      {item.name}
+                      <small>Ready to use</small>
+                    </span>
+                    <ArrowUpRight size={14} />
+                  </Link>
+                ))}
+                {!sources.length && (
+                  <div className="assistant-source-empty">
+                    <BookOpen size={18} />
+                    <strong>No ready sources yet</strong>
+                    <span>
+                      Documents appear here once processing is complete.
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
           </aside>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
