@@ -89,7 +89,7 @@ export default function SpotifyPanel({
         }
       >
         {floating && floatingOpen && (item || embed) && (
-          <div className="spotify-floating-controls">
+          <div className={`spotify-floating-controls ${embed ? "has-embed" : ""}`}>
             {item && (
               <div className="spotify-current-copy">
                 <span className="timer-eyebrow">

@@ -509,7 +509,7 @@
   background: transparent;
   box-shadow: none;
 }
-.spotify-floating > :not(.spotify-floating-header):not(.spotify-embed) {
+.spotify-floating > :not(.spotify-floating-header):not(.spotify-embed):not(.spotify-floating-controls) {
   display: none;
 }
 .spotify-floating .spotify-floating-header {
@@ -588,7 +588,9 @@
 .spotify-current-copy > span:last-child { color: var(--muted); font-size: 12px; }
 @media (prefers-reduced-motion: reduce) { .activity-ring-progress { transition: none; } }
 .spotify-floating.spotify-embed-only > :not(.spotify-embed):not(.spotify-floating-controls) { display: none; }
-.spotify-floating-controls { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px 12px 0 0; }
-.spotify-floating-controls .floating-timer-close { flex: none; margin-left: auto; }
+.spotify-floating-controls { display: flex; justify-content: flex-end; padding: 4px; background: transparent; }
+.spotify-floating-controls.has-embed .spotify-current-copy { display: none; }
+.spotify-floating-controls:not(.has-embed) .spotify-current-copy { padding: 8px; background: var(--surface); border-radius: 10px; }
+.spotify-floating-controls .floating-timer-close { flex: none; margin-left: auto; background: var(--surface); color: var(--text); }
 .spotify-floating .spotify-embed iframe { height: min(352px, max(80px, calc(100dvh - 220px))); }
 .spotify-floating { max-height: calc(100dvh - 110px); overflow-y: auto; }
