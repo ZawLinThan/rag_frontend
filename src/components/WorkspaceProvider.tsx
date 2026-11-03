@@ -9,6 +9,8 @@ import {
 } from "../lib/studyApi";
 import { formatFileSize } from "../lib/utils";
 import QueryState from "./QueryState";
+import { useLocation } from "react-router-dom";
+import { LayoutPageSkeleton } from "../skeletons";
 import type { ChildrenProps } from "../types/study";
 
 /**
@@ -19,11 +21,14 @@ import type { ChildrenProps } from "../types/study";
  */
 const WorkspaceProvider = ({ children }: ChildrenProps) => {
   const data = useStudyData();
+  const { pathname } = useLocation();
   const courseMutation = useStudyMutation(createCourse);
   const notebookMutation = useStudyMutation(createNotebook);
   const uploadMutation = useStudyMutation(uploadDocument);
   const deleteMutation = useStudyMutation(deleteDocument);
-  if (data.isPending || data.error)
+  if (data.isPending && !data.error)
+    return <LayoutPageSkeleton pathname={pathname} />;
+  if (data.error)
     return (
       <QueryState
         pending={data.isPending}

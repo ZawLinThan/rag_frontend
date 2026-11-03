@@ -1,3 +1,4 @@
+import { CoursePageSkeleton, DocumentListSkeleton } from "../skeletons";
 import { SortableCards, SortableCard } from "../components/SortableCards";
 import { useCardOrderStore } from "../stores/cardOrderStore";
 import { useAuthStore } from "../stores/authStore";
@@ -68,6 +69,7 @@ const CoursePage = () => {
     return (
       <QueryState
         pending={data.isPending || notebookQuery.isLoading}
+        skeleton={<CoursePageSkeleton />}
         error={data.error ?? notebookQuery.error}
         retry={() => {
           void data.refetch();
@@ -240,6 +242,7 @@ const CoursePage = () => {
           {documentQuery.isLoading || documentQuery.error ? (
             <QueryState
               pending={documentQuery.isLoading}
+              skeleton={<DocumentListSkeleton />}
               error={documentQuery.error}
               retry={() => void documentQuery.refetch()}
             />

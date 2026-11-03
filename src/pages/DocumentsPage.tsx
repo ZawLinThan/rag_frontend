@@ -1,3 +1,4 @@
+import { DocumentsContentSkeleton } from "../skeletons";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
@@ -34,6 +35,7 @@ const DocumentsPage = () => {
       />
       <QueryState
         pending={data.isPending}
+        skeleton={<DocumentsContentSkeleton />}
         error={data.error}
         retry={data.refetch}
       />

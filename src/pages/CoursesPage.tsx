@@ -1,3 +1,4 @@
+import { CoursesContentSkeleton } from "../skeletons";
 import { useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { useStudyData, useStudyMutation } from "../hooks/useStudyQueries";
@@ -112,6 +113,7 @@ const CoursesPage = () => {
       )}
       <QueryState
         pending={data.isPending}
+        skeleton={<CoursesContentSkeleton />}
         error={data.error}
         retry={data.refetch}
       />

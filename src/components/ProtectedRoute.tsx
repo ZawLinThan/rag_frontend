@@ -1,13 +1,13 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
+import { LayoutPageSkeleton } from "../skeletons";
 import { useAuthStore } from "../stores/authStore";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuthStore();
-  //const location = useLocation();
+  const { pathname } = useLocation();
 
   if (isLoading) {
-    // add skeleton loader later
-    return <div>Loading...</div>;
+    return <LayoutPageSkeleton pathname={pathname} />;
   }
 
   if (!user) {
