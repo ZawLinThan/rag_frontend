@@ -1,3 +1,4 @@
+import { TestPreviewSkeleton } from "../skeletons";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { studyQueries } from "../hooks/useStudyQueries";
@@ -18,6 +19,7 @@ const TestPreview = ({ id }: { id: string }) => {
     return (
       <QueryState
         pending={metadata.isPending || content.isPending}
+        skeleton={<TestPreviewSkeleton />}
         error={metadata.error ?? content.error}
         retry={() => {
           void metadata.refetch();

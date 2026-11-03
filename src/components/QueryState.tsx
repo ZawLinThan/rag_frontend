@@ -1,11 +1,16 @@
+import type { ReactNode } from "react";
+import { ListSkeleton, SkeletonRegion } from "../skeletons";
+
 const QueryState = ({
   pending,
   error,
   retry,
+  skeleton,
 }: {
   pending?: boolean;
   error?: Error | null;
   retry?: () => unknown;
+  skeleton?: ReactNode;
 }) => {
   if (error)
     return (
@@ -20,9 +25,9 @@ const QueryState = ({
     );
   if (pending)
     return (
-      <p className="empty" role="status">
-        Loading your study workspace…
-      </p>
+      <SkeletonRegion label="Loading content">
+        {skeleton ?? <ListSkeleton />}
+      </SkeletonRegion>
     );
   return null;
 };

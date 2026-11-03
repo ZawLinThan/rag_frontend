@@ -1,3 +1,4 @@
+import { FlashcardsContentSkeleton, Skeleton } from "../skeletons";
 import { useCardOrderStore } from "../stores/cardOrderStore";
 import { SortableCards, SortableCard } from "../components/SortableCards";
 import { useState } from "react";
@@ -51,9 +52,11 @@ const DeckTile = ({
           <Layers size={22} />
         </span>
         <span className="fc-label">
-          {query.isPending
-            ? "Loading cards…"
-            : `${query.data?.length ?? 0} cards`}
+          {query.isPending ? (
+            <Skeleton className="sk-line" />
+          ) : (
+            `${query.data?.length ?? 0} cards`
+          )}
         </span>
       </div>
       <div>
@@ -166,6 +169,7 @@ const FlashcardsPage = () => {
       />
       <QueryState
         pending={data.isPending || sets.isPending}
+        skeleton={<FlashcardsContentSkeleton />}
         error={data.error ?? sets.error}
         retry={() => {
           void data.refetch();

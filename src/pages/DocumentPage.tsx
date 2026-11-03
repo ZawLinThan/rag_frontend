@@ -1,3 +1,4 @@
+import { DocumentPageSkeleton } from "../skeletons";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Sparkles, FileText } from "lucide-react";
@@ -24,6 +25,7 @@ const DocumentPage = () => {
     return (
       <QueryState
         pending={query.isPending}
+        skeleton={<DocumentPageSkeleton />}
         error={query.error ?? data.error}
         retry={() => {
           void query.refetch();

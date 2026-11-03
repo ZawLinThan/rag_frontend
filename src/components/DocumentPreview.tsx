@@ -1,3 +1,4 @@
+import { DocumentPreviewSkeleton } from "../skeletons";
 import { useEffect, useState } from "react";
 import { getDocumentFile } from "../lib/studyApi";
 import type { Document } from "../types";
@@ -128,7 +129,7 @@ export default function DocumentPreview({ document }: { document: Document }) {
   return (
     <section className="document-preview" aria-label="Document preview">
       <h3>Preview</h3>
-      {state.loading && <p>Loading document…</p>}
+      {state.loading && <DocumentPreviewSkeleton />}
       {state.error && (
         <p className="notice" role="status">
           {state.error}

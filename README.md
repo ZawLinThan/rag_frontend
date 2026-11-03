@@ -1,50 +1,56 @@
 # Folio — RAG study assistant frontend
 
-React + TypeScript + Vite prototype with a responsive educational workspace.
+React, TypeScript, and Vite frontend for a responsive study workspace. Integration is in progress: courses, notebooks, documents, and chat use the backend, while flashcard and test workflows still contain sample data or stubs. Backend ingestion is not yet implemented, so uploading a document does not currently produce usable study material.
 
 ## Run
 
+From the `frontend` directory:
+
 ```sh
-npm install
+npm ci
+cp .env.example .env
 npm run dev
 ```
+
+Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` to the public credentials for the same Supabase project as the backend. Set `VITE_BACKEND_URL` to the backend origin (for example, `http://localhost:3000`), without `/api`. Start the backend and its worker as described in [the backend README](../backend/README.md). Browser uploads also require R2 CORS configuration.
 
 ## Screens
 
 - `/`: overview
-- `/courses` and `/courses/:courseId`: course creation, notebook creation, organized notes
-- `/documents` and `/documents/:documentId`: upload metadata, search, filters, sample previews
-- `/chat`: course, notebook, or file scoped sample answers with source links
-- `/flashcards`: reveal, review, and session completion
-- `/quizzes`: multiple-choice practice with feedback and scoring
-- `/settings`: prototype preferences, sign-out, sample workspace reset
-- `/login`, `/signup`, `/auth/callback`: Supabase email/password authentication with PKCE email confirmation
+- `/courses` and `/courses/:courseId`: courses, notebooks, and their documents
+- `/documents` and `/documents/:documentId`: uploads, search, metadata, and file previews
+- `/chat`: document-scoped assistant and conversation history
+- `/flashcards`: deck and card workflows under development
+- `/tests`: practice test workflows under development; `/quizzes` redirects here
+- `/timer`: focus timer
+- `/settings`: sign-out and non-persistent preference form
+- `/login`, `/signup`, `/auth/callback`: Supabase authentication
 
-Study features use sample data. Course, notebook, and upload metadata persist in localStorage. Uploads do not store file bytes or extract document contents. Chat retrieves matching sample passages; it does not call an LLM. Flashcards and quizzes are curated samples. Profile preferences currently apply only within the settings screen. The demo workspace remains public regardless of authentication.
+Workspace routes require authentication. The Axios client obtains the current Supabase session and sends its access token as a Bearer token. Study queries share a TanStack Query cache, which is cleared on account changes. See [backend connection notes](BACKEND_CONTRACTS.md) for endpoint and implementation status.
 
 ## Supabase authentication
 
-Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in `.env` using `.env.example`. Enable email authentication, configure the site URL, and allow `http://localhost:5173/auth/callback` (or your actual development origin) and your production callback URL in Supabase Auth redirect settings. Email templates must use Supabase's confirmation URL so the PKCE redirect contains a code. Signup confirmation links must be opened in the same browser where authentication started.
+Enable email authentication, configure the site URL, and allow `http://localhost:5173/auth/callback` (or your actual development origin) and your production callback URL in Supabase Auth redirect settings. Email templates must use Supabase's confirmation URL so the PKCE redirect contains a code. Signup confirmation links must be opened in the same browser where authentication started.
 
-The singleton client uses `flowType: 'pkce'` and `detectSessionInUrl: true`, letting Supabase exchange the callback code once. The callback reads the resulting session and handles failed or expired links. Signup collects full name, email, password (at least 8 characters), and password confirmation. The full name is stored as `user_metadata.full_name`; password confirmation is validated locally and never sent to Supabase. Sign-in uses email and password. Signup redirects immediately when a session is returned; otherwise it asks the user to confirm their email.
+The singleton client uses `flowType: 'pkce'` and `detectSessionInUrl: true`. Signup collects full name, email, password (at least 8 characters), and password confirmation. The full name is stored as `user_metadata.full_name`; password confirmation is validated locally and never sent to Supabase. See the [Supabase PKCE documentation](https://supabase.com/docs/guides/auth/sessions/pkce-flow).
 
-Reference: https://supabase.com/docs/guides/auth/sessions/pkce-flow
+## Structure
 
-## Structure and backend integration
-
-- `src/App.tsx`: routes only
-- `src/pages`: route entry points composing components
-- `src/components`: separate reusable TSX components
-- `src/hooks`: custom workspace/session hooks
-- `src/types`: ordinary application and component types
-- `src/zodSchema`: runtime schemas and their inferred types
-- `src/data`: validated sample workspace and practice content
-
-Replace workspace provider actions with API calls, wire ingestion into document uploads, replace sample passage matching with your RAG endpoint, and load generated practice content from your backend. Keep incoming responses validated with Zod. Add authenticated route protection when connecting private user data.
+- `src/App.tsx`: routes and authentication boundary
+- `src/pages`, `src/components`: page and reusable UI components
+- `src/skeletons`: page and reusable component loading placeholders
+- `src/hooks`: workspace, study queries, and other hooks
+- `src/lib/studyApi.ts`, `src/lib/chatApi.ts`: API and remaining sample adapters
+- `src/types`, `src/zodSchema`: application types and runtime validation
+- `contracts/`: backend type snapshot and [update instructions](contracts/README.md)
 
 ## Verification
 
 ```sh
 npm run build
 npm run lint
+npm test
+npm run check:contracts
 ```
+
+The current build has TypeScript errors in the unfinished study API and reference-test flow. The study API test suite still expects the removed `resetSampleData` helper, so it currently fails. The contract check only compares TypeScript types to the snapshot; it does not exercise the server.

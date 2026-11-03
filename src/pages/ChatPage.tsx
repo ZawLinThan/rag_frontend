@@ -1,3 +1,8 @@
+import {
+  ChatPageSkeleton,
+  ConversationHistorySkeleton,
+  SkeletonRegion,
+} from "../skeletons";
 import { useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
@@ -189,6 +194,7 @@ const ChatPage = () => {
     return (
       <QueryState
         pending={data.isPending}
+        skeleton={<ChatPageSkeleton />}
         error={data.error}
         retry={data.refetch}
       />
@@ -230,7 +236,11 @@ const ChatPage = () => {
             </button>
           </div>
           <p className="history-intro">Pick up where you left off.</p>
-          {history.isPending && <p>Loading conversations…</p>}
+          {history.isPending && (
+            <SkeletonRegion label="Loading conversations">
+              <ConversationHistorySkeleton />
+            </SkeletonRegion>
+          )}
           {history.error && (
             <p className="error" role="alert">
               Could not load chat history.{" "}

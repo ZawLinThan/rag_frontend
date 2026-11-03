@@ -1,0 +1,308 @@
+.skeleton {
+  display: block;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--muted) 17%, var(--surface));
+  border-radius: 6px;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+@keyframes skeleton-pulse {
+  50% {
+    opacity: 0.48;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+.skeleton-stack,
+.sk-row-copy,
+.sk-field,
+.sk-heading-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sk-heading-copy {
+  gap: 10px;
+}
+.sk-title {
+  width: min(260px, 80%);
+  height: 30px;
+}
+.sk-subtitle {
+  width: min(360px, 90%);
+  height: 14px;
+}
+.sk-line {
+  width: 100%;
+  height: 12px;
+}
+.sk-short {
+  width: 35%;
+}
+.sk-medium {
+  width: 60%;
+}
+.sk-button {
+  width: 120px;
+  height: 40px;
+}
+.sk-theme {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+.sk-input {
+  width: 100%;
+  height: 42px;
+}
+.sk-label {
+  width: 90px;
+  height: 11px;
+}
+.sk-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+.sk-pill {
+  width: 65px;
+  height: 24px;
+}
+.sk-code {
+  width: 65px;
+  height: 10px;
+}
+.sk-card-title {
+  width: 60%;
+  height: 19px;
+  margin-top: 9px;
+}
+.sk-course-description {
+  height: 36px;
+  margin-top: 9px;
+}
+.sk-meta {
+  width: 85px;
+  height: 11px;
+}
+.sk-course .course-card-bottom .skeleton {
+  display: block;
+}
+.sk-deck-description {
+  width: 65%;
+  height: 13px;
+  margin-top: 8px;
+}
+.sk-file-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 7px;
+}
+.sk-row-copy {
+  gap: 7px;
+}
+.sk-row-title {
+  width: min(220px, 80%);
+  height: 14px;
+}
+.sk-row-meta {
+  width: min(280px, 90%);
+  height: 10px;
+}
+.sk-action-icon {
+  width: 33px;
+  height: 33px;
+}
+.sk-search {
+  height: 42px;
+}
+.sk-search-icon {
+  width: 18px;
+  height: 18px;
+}
+.sk-search-text {
+  width: 160px;
+  max-width: 65%;
+  height: 12px;
+}
+.sk-select {
+  width: 150px;
+  height: 42px;
+}
+.sk-dropzone {
+  display: flex;
+  flex-direction: column;
+}
+.sk-upload-icon {
+  width: 30px;
+  height: 30px;
+}
+.sk-upload-title {
+  width: min(250px, 80%);
+  height: 14px;
+}
+.sk-upload-subtitle {
+  width: min(210px, 70%);
+  height: 12px;
+}
+.sk-section-title {
+  width: 190px;
+  height: 22px;
+}
+.sk-back {
+  width: 110px;
+  height: 16px;
+  margin-bottom: 20px;
+}
+.sk-notebook {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.sk-notebook-icon {
+  width: 25px;
+  height: 25px;
+  margin-bottom: 11px;
+}
+.sk-notebook .sk-card-title {
+  margin-top: 0;
+}
+.sk-reader {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.sk-reader .document-preview {
+  width: 100%;
+}
+.sk-preview {
+  background: color-mix(in srgb, var(--muted) 10%, var(--surface));
+}
+.sk-question {
+  width: 75%;
+  height: 20px;
+  margin: 12px 0;
+}
+.sk-radio {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+.sk-hero-copy {
+  width: min(480px, 100%);
+}
+.sk-hero-title {
+  width: 85%;
+  height: 40px;
+  margin-top: 12px;
+}
+.sk-hero-description {
+  width: 90%;
+  height: 26px;
+  margin-top: 12px;
+}
+.sk-hero-copy .sk-button {
+  margin-top: 24px;
+}
+.sk-hero-art {
+  width: 220px;
+  height: 190px;
+  margin: auto;
+}
+.sk-stat-copy {
+  display: grid;
+  gap: 8px;
+}
+.sk-stat-value {
+  width: 35px;
+  height: 24px;
+}
+.sk-panel-action {
+  margin-top: 24px;
+}
+.sk-chat-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+.sk-clock {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  margin: 32px auto;
+}
+.skeleton-chat,
+.skeleton-auth {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+.sk-brand {
+  width: 150px;
+  height: 35px;
+}
+.sk-nav-icon {
+  width: 19px;
+  height: 19px;
+}
+.sk-nav-text {
+  width: 100px;
+  height: 12px;
+}
+.sk-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+@media (max-width: 900px) {
+  .skeleton-chat,
+  .skeleton-auth {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .skeleton-layout .sidebar nav .nav-item {
+    flex-shrink: 0;
+  }
+  .sk-nav-text {
+    width: 65px;
+  }
+  .sk-hero-title {
+    height: 36px;
+  }
+}
+/* Text keeps the exact live typography, line boxes, and responsive wrapping. */
+.sk-workspace .sk-text,
+.study-assistant .chat-history-item .sk-text {
+  display: inline;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  border-radius: 6px;
+  pointer-events: none;
+}
+.sk-ui-icon {
+  display: inline-block;
+  border-radius: 6px;
+}
+.sk-workspace .sk-control {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--muted) 17%, var(--surface)),
+    color-mix(in srgb, var(--muted) 17%, var(--surface))
+  );
+  background-size: 65% 12px;
+  background-position: 12px center;
+  background-repeat: no-repeat;
+  opacity: 1;
+}
+.sk-workspace button:disabled {
+  opacity: 1;
+  cursor: default;
+}
