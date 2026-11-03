@@ -565,7 +565,7 @@
   }
 }
 .activity-indicator { position: relative; z-index: 35; }
-.activity-trigger { position: relative; display: grid; place-items: center; width: 42px; height: 42px; padding: 0; border: 1px solid var(--border); border-radius: 50%; background: var(--surface); color: var(--blue); cursor: pointer; animation: activity-arrive .45s ease both; }
+.activity-trigger { position: relative; display: grid; place-items: center; width: 42px; height: 42px; padding: 0; border: 1px solid var(--border); border-radius: 50%; background: var(--surface); color: var(--blue); cursor: pointer; }
 .activity-countdown { position: relative; display: grid; place-items: center; width: 36px; height: 36px; font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .activity-countdown svg { position: absolute; inset: 0; transform: rotate(-90deg); }
 .activity-countdown circle { fill: none; stroke-width: 3; }
@@ -586,7 +586,9 @@
 .spotify-current-copy { display: grid; gap: 5px; min-width: 0; flex: 1; }
 .spotify-current-copy strong, .spotify-current-copy > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .spotify-current-copy > span:last-child { color: var(--muted); font-size: 12px; }
-@keyframes activity-arrive { from { opacity: 0; transform: translate(-24px, 14px) scale(.65); } to { opacity: 1; transform: translate(0) scale(1); } }
-@media (prefers-reduced-motion: reduce) { .activity-trigger { animation: none; } .activity-ring-progress { transition: none; } }
-.spotify-embed-only > :not(.spotify-embed) { display: none; }
-.spotify-float-close { position: fixed; z-index: 30; right: 26px; bottom: 458px; border: 1px solid var(--border); border-radius: 50%; width: 28px; height: 28px; background: var(--surface); color: var(--muted); cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .activity-ring-progress { transition: none; } }
+.spotify-floating.spotify-embed-only > :not(.spotify-embed):not(.spotify-floating-controls) { display: none; }
+.spotify-floating-controls { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px 12px 0 0; }
+.spotify-floating-controls .floating-timer-close { flex: none; margin-left: auto; }
+.spotify-floating .spotify-embed iframe { height: min(352px, max(80px, calc(100dvh - 220px))); }
+.spotify-floating { max-height: calc(100dvh - 110px); overflow-y: auto; }

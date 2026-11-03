@@ -78,50 +78,49 @@ export default function SpotifyPanel({
     : null;
   return (
     <>
-      {floating && floatingOpen && item && (
-        <aside
-          className="spotify-current-floating"
-          aria-label="Current Spotify track"
-        >
-          <div className="spotify-current-copy">
-            <span className="timer-eyebrow">
-              {playback?.is_playing ? "NOW PLAYING" : "SPOTIFY PLAYBACK"}
-            </span>
-            <strong>{item.name}</strong>
-            <span>
-              {item.artists?.map((artist) => artist.name).join(", ") ||
-                "Spotify audio"}
-            </span>
-          </div>
-          <button
-            type="button"
-            className="floating-timer-close"
-            onClick={closeFloating}
-            aria-label="Close Spotify track"
-          >
-            ×
-          </button>
-        </aside>
-      )}
-      {floating && floatingOpen && !item && embed && (
-        <button
-          type="button"
-          className="spotify-float-close"
-          onClick={closeFloating}
-          aria-label="Close Spotify player"
-        >
-          ×
-        </button>
-      )}
       <section
-        className={`spotify-panel ${floating && floatingOpen && !item && embed ? "spotify-floating spotify-embed-only" : ""}`}
-        aria-labelledby="spotify-heading"
+        className={`spotify-panel ${floating && floatingOpen && (item || embed) ? "spotify-floating spotify-embed-only" : ""}`}
+        aria-label={floating ? "Spotify player" : undefined}
+        aria-labelledby={floating ? undefined : "spotify-heading"}
         style={
-          floating && !(floatingOpen && !item && embed)
+          floating && !(floatingOpen && (item || embed))
             ? { display: "none" }
             : undefined
         }
       >
+        {floating && floatingOpen && (item || embed) && (
+          <div className="spotify-floating-controls">
+            {item && (
+              <div className="spotify-current-copy">
+                <span className="timer-eyebrow">
+                  {playback?.is_playing ? "NOW PLAYING" : "SPOTIFY PLAYBACK"}
+                </span>
+                <strong>{item.name}</strong>
+                <span>
+                  {item.artists?.map((artist) => artist.name).join(", ") ||
+                    "Spotify audio"}
+                </span>
+                {!embed && current && (
+                  <button
+                    type="button"
+                    className="text-link"
+                    onClick={() => setContent(current)}
+                  >
+                    Load in player
+                  </button>
+                )}
+              </div>
+            )}
+            <button
+              type="button"
+              className="floating-timer-close"
+              onClick={closeFloating}
+              aria-label="Close Spotify player"
+            >
+              ×
+            </button>
+          </div>
+        )}
         <div className="spotify-heading">
           <div>
             <span className="timer-eyebrow">A SOUNDTRACK FOR YOUR SESSION</span>

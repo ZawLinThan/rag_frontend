@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Clock3, Pause, Play, X } from "lucide-react";
 import { useTimer } from "../hooks/useTimer";
@@ -14,19 +13,17 @@ export default function FloatingTimer() {
     floatingHidden,
     setFloatingHidden,
   } = useTimer();
-  const previousPath = useRef(pathname);
-  useEffect(() => {
-    if (previousPath.current === "/timer" && pathname !== "/timer") setFloatingHidden(true);
-    previousPath.current = pathname;
-  }, [pathname, setFloatingHidden]);
-  const visible = !floatingHidden && pathname !== "/timer" && timer.status !== "idle";
+  const visible =
+    !floatingHidden && pathname !== "/timer" && timer.status !== "idle";
   if (!visible) return null;
   return (
     <aside
       className={`floating-timer ${timer.status}`}
       aria-label="Focus timer"
     >
-      <span className="floating-timer-icon"><Clock3 size={18} /></span>
+      <span className="floating-timer-icon">
+        <Clock3 size={18} />
+      </span>
       <Link to="/timer" className="floating-timer-link">
         <span>
           {timer.status === "completed"
