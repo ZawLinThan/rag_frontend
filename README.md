@@ -54,3 +54,7 @@ npm run check:contracts
 ```
 
 The current build has TypeScript errors in the unfinished study API and reference-test flow. The study API test suite still expects the removed `resetSampleData` helper, so it currently fails. The contract check only compares TypeScript types to the snapshot; it does not exercise the server.
+
+## Spotify
+
+The focus timer includes a Spotify music panel with an embedded player and optional currently-playing integration. See [Spotify setup and API contract](docs/spotify.md) for application registration, PKCE authorization, redirect requirements, and verification.

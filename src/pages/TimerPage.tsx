@@ -1,13 +1,6 @@
+import SpotifyPanel from "../components/SpotifyPanel";
 import { useState } from "react";
-import {
-  ArrowRight,
-  Check,
-  Clock3,
-  Pause,
-  Play,
-  RotateCcw,
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { Pause, Play, RotateCcw } from "lucide-react";
 import PageHeading from "../components/PageHeading";
 import { useTimer } from "../hooks/useTimer";
 import { formatTimer } from "../lib/timer";
@@ -29,6 +22,7 @@ export default function TimerPage() {
     setFloatingHidden,
   } = useTimer();
   const [minutes, setMinutes] = useState("25");
+  const [custom, setCustom] = useState(false);
   const amount = Number(minutes);
   const valid = Number.isInteger(amount) && amount >= 1 && amount <= 240;
   const idle = timer.status === "idle";
@@ -40,7 +34,7 @@ export default function TimerPage() {
         title="Focus timer"
         description="Make a little space for the work that matters."
       />
-      <div className="timer-layout">
+      <div className="timer-music-layout">
         <section className="timer-main" aria-label="Focus timer">
           <div className="timer-main-top">
             <div>
@@ -112,6 +106,71 @@ export default function TimerPage() {
               </div>
             </div>
           </div>
+          <div className="timer-duration-controls">
+            <div
+              className="timer-duration-options"
+              role="group"
+              aria-label="Focus duration"
+            >
+              {presets.map((preset) => (
+                <button
+                  type="button"
+                  key={preset.minutes}
+                  className={`button timer-duration-button ${!custom && amount === preset.minutes ? "selected" : ""}`}
+                  aria-pressed={!custom && amount === preset.minutes}
+                  disabled={!idle}
+                  title={preset.label}
+                  onClick={() => {
+                    setCustom(false);
+                    setMinutes(String(preset.minutes));
+                  }}
+                >
+                  {preset.minutes} min
+                </button>
+              ))}
+              <button
+                type="button"
+                className={`button timer-duration-button ${custom ? "selected" : ""}`}
+                aria-pressed={custom}
+                aria-expanded={custom}
+                aria-controls="timer-custom-duration"
+                disabled={!idle}
+                onClick={() => setCustom((value) => !value)}
+              >
+                Custom
+              </button>
+            </div>
+            {custom && (
+              <div id="timer-custom-duration" className="timer-custom-duration">
+                <label htmlFor="timer-minutes">Set your own time</label>
+                <div>
+                  <input
+                    id="timer-minutes"
+                    type="number"
+                    min="1"
+                    max="240"
+                    step="1"
+                    value={minutes}
+                    disabled={!idle}
+                    onChange={(event) => setMinutes(event.target.value)}
+                    aria-describedby="timer-duration-help"
+                    autoFocus
+                  />
+                  <span>minutes</span>
+                </div>
+                <p
+                  id="timer-duration-help"
+                  className={!valid ? "error" : "muted"}
+                >
+                  {!valid
+                    ? "Enter a whole number between 1 and 240."
+                    : !idle
+                      ? "Reset the timer to change the duration."
+                      : "Choose any length from 1 to 240 minutes."}
+                </p>
+              </div>
+            )}
+          </div>
           <div className="timer-actions">
             {idle && (
               <button
@@ -158,77 +217,7 @@ export default function TimerPage() {
             </p>
           )}
         </section>
-        <aside className="timer-settings">
-          <div className="timer-settings-heading">
-            <span className="timer-settings-icon">
-              <Clock3 size={18} />
-            </span>
-            <div>
-              <span className="timer-eyebrow">MAKE IT YOURS</span>
-              <h3>Set your time</h3>
-            </div>
-          </div>
-          <p>Choose a rhythm that works for you.</p>
-          <div
-            className="timer-presets"
-            role="group"
-            aria-label="Timer presets"
-          >
-            {presets.map((preset) => (
-              <button
-                type="button"
-                key={preset.minutes}
-                className={`timer-preset ${idle && amount === preset.minutes ? "selected" : ""}`}
-                aria-pressed={idle && amount === preset.minutes}
-                disabled={!idle}
-                onClick={() => setMinutes(String(preset.minutes))}
-              >
-                <span className="timer-preset-number">
-                  {preset.minutes}
-                  <small>MIN</small>
-                </span>
-                <span className="timer-preset-copy">
-                  <strong>{preset.label}</strong>
-                  <small>{preset.description}</small>
-                </span>
-                {idle && amount === preset.minutes && <Check size={16} />}
-              </button>
-            ))}
-          </div>
-          <label className="timer-custom">
-            Or set your own{" "}
-            <span className="timer-custom-input">
-              <input
-                type="number"
-                min="1"
-                max="240"
-                step="1"
-                value={minutes}
-                disabled={!idle}
-                onChange={(event) => setMinutes(event.target.value)}
-                aria-describedby="timer-custom-help"
-              />
-              <span>minutes</span>
-            </span>
-          </label>
-          <p id="timer-custom-help" className="timer-helper">
-            {!valid
-              ? "Enter a whole number between 1 and 240."
-              : !idle
-                ? "Reset the timer to change the duration."
-                : "Choose any length from 1 to 240 minutes."}
-          </p>
-          <div className="timer-tip">
-            <span>✦</span>
-            <div>
-              <strong>A gentle reminder</strong>
-              <p>A focused session is a fresh start, not a race.</p>
-            </div>
-          </div>
-          <Link className="timer-back-link" to="/courses">
-            Explore your courses <ArrowRight size={15} />
-          </Link>
-        </aside>
+        <SpotifyPanel />
       </div>
     </div>
   );

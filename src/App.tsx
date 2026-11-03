@@ -1,3 +1,5 @@
+import SpotifyCallbackPage from "./pages/SpotifyCallbackPage";
+import { spotify } from "./lib/spotify";
 import { Navigate, Route, Routes } from "react-router-dom";
 import LayoutPage from "./pages/LayoutPage";
 import OverviewPage from "./pages/OverviewPage";
@@ -29,6 +31,7 @@ const App = () => {
     let previousUserId = useAuthStore.getState().user?.id;
     const unsubscribeIdentity = useAuthStore.subscribe((state) => {
       if (state.user?.id !== previousUserId) {
+        if (previousUserId) spotify.disconnect();
         previousUserId = state.user?.id;
         // Never reuse one account's server records after an account switch.
         queryClient.removeQueries({ queryKey: studyKeys.all });
@@ -43,6 +46,7 @@ const App = () => {
 
   return (
     <Routes>
+      <Route path="/spotify/callback" element={<SpotifyCallbackPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/auth/callback" element={<CallbackPage />} />

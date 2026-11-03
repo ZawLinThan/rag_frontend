@@ -86,6 +86,15 @@ export const TimerMainSkeleton = () => (
         </div>
       </div>
     </div>
+    <div className="timer-duration-controls">
+      <div className="timer-duration-options">
+        {["25 min", "50 min", "10 min", "Custom"].map((label) => (
+          <button className="button timer-duration-button" disabled key={label}>
+            <SkeletonText>{label}</SkeletonText>
+          </button>
+        ))}
+      </div>
+    </div>
     <div className="timer-actions">
       <button className="button primary timer-primary" disabled>
         <Icon />
@@ -100,89 +109,6 @@ export const TimerMainSkeleton = () => (
       </span>
     </div>
   </section>
-);
-export const TimerSettingsSkeleton = () => (
-  <aside className="timer-settings">
-    <div className="timer-settings-heading">
-      <span className="timer-settings-icon">
-        <Icon size={18} />
-      </span>
-      <div>
-        <span className="timer-eyebrow">
-          <SkeletonText>MAKE IT YOURS</SkeletonText>
-        </span>
-        <h3>
-          <SkeletonText>Set your time</SkeletonText>
-        </h3>
-      </div>
-    </div>
-    <p>
-      <SkeletonText>Choose a rhythm that works for you.</SkeletonText>
-    </p>
-    <div className="timer-presets">
-      {[
-        ["25", "Quick focus", "Build momentum"],
-        ["50", "Deep work", "Find your flow"],
-        ["10", "Short break", "Take a breath"],
-      ].map(([minutes, title, description]) => (
-        <button className="timer-preset" disabled key={minutes}>
-          <span className="timer-preset-number">
-            <SkeletonText>{minutes}</SkeletonText>
-            <small>
-              <SkeletonText>MIN</SkeletonText>
-            </small>
-          </span>
-          <span className="timer-preset-copy">
-            <strong>
-              <SkeletonText>{title}</SkeletonText>
-            </strong>
-            <small>
-              <SkeletonText>{description}</SkeletonText>
-            </small>
-          </span>
-        </button>
-      ))}
-    </div>
-    <label className="timer-custom">
-      <span>
-        <SkeletonText>Or set your own</SkeletonText>
-      </span>
-      <span className="timer-custom-input">
-        <input
-          type="number"
-          value="25"
-          disabled
-          readOnly
-          className="sk-control"
-        />
-        <span>
-          <SkeletonText>minutes</SkeletonText>
-        </span>
-      </span>
-    </label>
-    <p className="timer-helper">
-      <SkeletonText>Choose any length from 1 to 240 minutes.</SkeletonText>
-    </p>
-    <div className="timer-tip">
-      <span>
-        <SkeletonText>✦</SkeletonText>
-      </span>
-      <div>
-        <strong>
-          <SkeletonText>A gentle reminder</SkeletonText>
-        </strong>
-        <p>
-          <SkeletonText>
-            A focused session is a fresh start, not a race.
-          </SkeletonText>
-        </p>
-      </div>
-    </div>
-    <span className="timer-back-link">
-      <SkeletonText>Explore your courses</SkeletonText>
-      <Icon size={15} />
-    </span>
-  </aside>
 );
 export const ConversationHistorySkeleton = ({
   count = 3,
@@ -326,4 +252,83 @@ export const AssistantSourcesSkeleton = () => (
       </div>
     </div>
   </aside>
+);
+
+export const SpotifyPanelSkeleton = () => (
+  <section className="spotify-panel">
+    <div className="spotify-heading">
+      <div>
+        <span className="timer-eyebrow">
+          <SkeletonText>A SOUNDTRACK FOR YOUR SESSION</SkeletonText>
+        </span>
+        <h2>
+          <Icon size={22} />
+          <SkeletonText>Spotify</SkeletonText>
+        </h2>
+      </div>
+      <span className="text-link">
+        <SkeletonText>Open Spotify</SkeletonText>
+        <Icon size={14} />
+      </span>
+    </div>
+    <p className="spotify-intro">
+      <SkeletonText>
+        Set the mood. Keep your focus timer in view while you listen.
+      </SkeletonText>
+    </p>
+    <div className="spotify-connection">
+      <span className="spotify-connection-icon">
+        <Icon size={21} />
+      </span>
+      <div>
+        <strong>
+          <SkeletonText>Bring your music along</SkeletonText>
+        </strong>
+        <p>
+          <SkeletonText>
+            Connect to see what’s playing, or paste a Spotify link below.
+          </SkeletonText>
+        </p>
+      </div>
+      <button className="button spotify-connect" disabled>
+        <SkeletonText>Connect Spotify</SkeletonText>
+      </button>
+    </div>
+    <div className="spotify-link-form">
+      <label>
+        <SkeletonText>Your playlist, album, or track</SkeletonText>
+      </label>
+      <div>
+        <span className="spotify-link-icon">
+          <Icon />
+        </span>
+        <input className="sk-control" disabled />
+        <button className="button" disabled>
+          <SkeletonText>Load player</SkeletonText>
+        </button>
+      </div>
+    </div>
+    <div className="spotify-empty">
+      <Icon size={32} />
+      <h3>
+        <SkeletonText>A little music. A little momentum.</SkeletonText>
+      </h3>
+      <p>
+        <SkeletonText>
+          Copy a link from Spotify’s Share menu and load it here to start
+          listening.
+        </SkeletonText>
+      </p>
+      <span className="text-link">
+        <SkeletonText>Find something on Spotify</SkeletonText>
+        <Icon size={14} />
+      </span>
+    </div>
+    <p className="spotify-footnote">
+      <SkeletonText>
+        Music provided by Spotify. Playback availability depends on your Spotify
+        account and browser. Timer controls only affect your focus session.
+      </SkeletonText>
+    </p>
+  </section>
 );
