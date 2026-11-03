@@ -1,7 +1,7 @@
 import {
   WorkspaceHeadingSkeleton,
   TimerMainSkeleton,
-  TimerSettingsSkeleton,
+  SpotifyPanelSkeleton,
   AssistantConversationSkeleton,
   AssistantSourcesSkeleton,
 } from "./WorkspaceSkeletons";
@@ -190,9 +190,9 @@ export const SettingsPageSkeleton = () => (
 export const TimerPageSkeleton = () => (
   <div className="timer-page sk-workspace" inert aria-hidden="true">
     <WorkspaceHeadingSkeleton timer />
-    <div className="timer-layout">
+    <div className="timer-music-layout">
       <TimerMainSkeleton />
-      <TimerSettingsSkeleton />
+      <SpotifyPanelSkeleton />
     </div>
   </div>
 );

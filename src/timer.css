@@ -5,14 +5,7 @@
 .timer-page .page-heading {
   margin-bottom: 30px;
 }
-.timer-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: 18px;
-  align-items: stretch;
-}
-.timer-main,
-.timer-settings {
+.timer-main {
   border: 1px solid var(--timer-line);
   border-radius: 20px;
   background: var(--surface);
@@ -175,146 +168,6 @@
   padding: 0 15px 15px;
   font-size: 12px;
 }
-.timer-settings {
-  min-width: 0;
-  padding: 26px 22px;
-}
-.timer-settings-heading {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-}
-.timer-settings-icon {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  background: var(--timer-soft);
-  color: var(--blue);
-  border-radius: 12px;
-}
-.timer-settings h3 {
-  margin-top: 4px;
-  font-size: 16px;
-}
-.timer-settings > p {
-  margin: 15px 0 20px;
-  font-size: 12px;
-}
-.timer-presets {
-  display: grid;
-  gap: 9px;
-}
-.timer-preset {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 12px;
-  background: var(--surface);
-  border: 1px solid var(--timer-line);
-  border-radius: 12px;
-  color: var(--text);
-  text-align: left;
-}
-.timer-preset.selected {
-  border-color: var(--blue);
-  background: var(--timer-soft);
-}
-.timer-preset > svg {
-  margin-left: auto;
-  color: var(--blue);
-}
-.timer-preset-number {
-  display: grid;
-  place-items: center;
-  align-content: center;
-  flex-shrink: 0;
-  height: 45px;
-  width: 45px;
-  background: var(--timer-soft);
-  color: var(--blue);
-  border-radius: 9px;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1;
-}
-.timer-preset-number small {
-  font-size: 8px;
-  letter-spacing: 0.08em;
-  margin-top: 4px;
-}
-.timer-preset-copy {
-  display: grid;
-  gap: 4px;
-}
-.timer-preset-copy strong {
-  font-size: 12px;
-}
-.timer-preset-copy small {
-  color: var(--muted);
-  font-size: 11px;
-}
-.timer-custom {
-  display: grid;
-  gap: 9px;
-  margin-top: 23px;
-  font-size: 11px;
-  font-weight: 700;
-}
-.timer-custom-input {
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--timer-line);
-  border-radius: 9px;
-  background: var(--surface);
-}
-.timer-custom-input input {
-  min-width: 0;
-  width: 100%;
-  border: 0;
-  background: transparent;
-  color: var(--text);
-  padding: 11px 12px;
-}
-.timer-custom-input > span {
-  padding: 0 12px;
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 400;
-}
-.timer-settings .timer-helper {
-  margin: 8px 0 0;
-  font-size: 10px;
-}
-.timer-tip {
-  display: flex;
-  gap: 10px;
-  margin-top: 25px;
-  padding: 15px;
-  border-radius: 12px;
-  background: var(--timer-soft);
-}
-.timer-tip > span {
-  color: var(--blue);
-  font-size: 17px;
-}
-.timer-tip strong {
-  font-size: 11px;
-}
-.timer-tip p {
-  margin-top: 4px;
-  font-size: 11px;
-}
-.timer-back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 22px;
-  color: var(--blue);
-  font-size: 11px;
-  font-weight: 700;
-}
 .floating-timer {
   position: fixed;
   z-index: 30;
@@ -365,9 +218,6 @@
   background: var(--blue);
 }
 @media (max-width: 900px) {
-  .timer-layout {
-    grid-template-columns: 1fr;
-  }
   .timer-main {
     min-height: 570px;
   }
@@ -379,9 +229,6 @@
   .timer-main {
     min-height: 520px;
   }
-  .timer-settings {
-    padding: 22px;
-  }
   .floating-timer {
     bottom: 16px;
     right: 16px;
@@ -391,27 +238,6 @@
   .timer-ring-progress {
     transition: none;
   }
-}
-.floating-timer-grip {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 38px;
-  margin: 0 -6px 0 -4px;
-  padding: 0;
-  border: 0;
-  border-radius: 6px;
-  color: var(--muted);
-  background: transparent;
-  cursor: grab;
-  touch-action: none;
-}
-.floating-timer-grip:active {
-  cursor: grabbing;
-}
-.floating-timer-grip:hover {
-  background: var(--blue-surface);
-  color: var(--blue);
 }
 .floating-timer-close {
   display: grid;
@@ -431,3 +257,340 @@
   align-self: center;
   margin: 0 16px 16px;
 }
+
+/* Keep the focus timer and music visible together on wide screens. */
+.timer-music-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
+  gap: 20px;
+  align-items: stretch;
+}
+.spotify-panel {
+  min-width: 0;
+  padding: 26px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+}
+.spotify-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.spotify-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 24px;
+  margin-top: 7px;
+}
+.spotify-heading .text-link {
+  font-size: 11px;
+}
+.spotify-intro {
+  margin: 16px 0 22px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.spotify-connection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--timer-soft);
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+.spotify-connection-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+.spotify-connection > div {
+  flex: 1;
+  min-width: 160px;
+}
+.spotify-connection strong {
+  font-size: 13px;
+}
+.spotify-connection p {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 4px;
+}
+.spotify-connect {
+  background: #1db954;
+  color: #000;
+  border-color: #1db954;
+}
+.spotify-now-playing {
+  display: grid;
+  gap: 8px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.spotify-now-playing > span:not(.timer-eyebrow),
+.spotify-now-playing p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.spotify-link-form {
+  margin-top: 24px;
+}
+.spotify-link-form > label {
+  font-size: 12px;
+  margin-bottom: 9px;
+}
+.spotify-link-form > div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.spotify-link-form input {
+  min-width: 0;
+  width: 100%;
+  font-size: 12px;
+}
+.spotify-link-icon {
+  color: var(--muted);
+  display: flex;
+}
+.spotify-link-form .button {
+  white-space: nowrap;
+}
+.spotify-embed {
+  margin-top: 20px;
+}
+.spotify-embed iframe {
+  border: 0;
+  border-radius: 12px;
+  display: block;
+}
+.spotify-embed > button {
+  margin-top: 12px;
+}
+.spotify-empty {
+  min-height: 270px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  padding: 28px 16px;
+  margin-top: 20px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  color: var(--muted);
+}
+.spotify-empty h3 {
+  font-size: 16px;
+  color: var(--text);
+}
+.spotify-empty p {
+  max-width: 290px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.spotify-footnote {
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+}
+@media (max-width: 1150px) {
+  .timer-music-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .spotify-panel {
+    padding: 22px;
+  }
+  .spotify-link-form > div {
+    flex-wrap: wrap;
+  }
+  .spotify-link-form input {
+    flex: 1;
+  }
+  .spotify-link-form .button {
+    width: 100%;
+  }
+}
+
+.timer-duration-controls {
+  padding: 0 20px 20px;
+}
+.timer-duration-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+.timer-duration-button {
+  min-width: 0;
+  padding: 10px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.timer-custom-duration {
+  max-width: 420px;
+  margin: 16px auto 0;
+}
+.timer-custom-duration > label {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.timer-custom-duration > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.timer-custom-duration input {
+  width: 100%;
+  min-width: 0;
+}
+.timer-custom-duration span,
+.timer-custom-duration p {
+  font-size: 11px;
+}
+.timer-custom-duration p {
+  margin-top: 8px;
+}
+@media (max-width: 560px) {
+  .timer-duration-options {
+    gap: 6px;
+  }
+  .timer-duration-button {
+    font-size: 11px;
+    padding: 10px 4px;
+  }
+}
+
+/* Spotify lives in the authenticated layout, so route changes never replace
+   the iframe or reset playback. Only its presentation changes. */
+.timer-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
+  gap: 0 20px;
+  align-items: stretch;
+}
+.timer-workspace > .timer-page,
+.timer-workspace .timer-music-layout {
+  display: contents;
+}
+.timer-workspace > .timer-page > .page-heading {
+  grid-column: 1 / -1;
+}
+.spotify-floating-header {
+  display: none;
+}
+.spotify-dormant {
+  display: none;
+}
+.spotify-floating {
+  position: fixed;
+  z-index: 29;
+  right: 24px;
+  bottom: 100px;
+  width: min(360px, calc(100vw - 32px));
+  max-height: calc(100dvh - 120px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.spotify-floating > :not(.spotify-floating-header):not(.spotify-embed):not(.spotify-floating-controls) {
+  display: none;
+}
+.spotify-floating .spotify-floating-header {
+  display: block;
+  height: 24px;
+}
+.spotify-drag {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 24px;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 6px 6px 0 0;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: grab;
+  touch-action: none;
+}
+.spotify-drag:active,
+.floating-timer-drag:active {
+  cursor: grabbing;
+}
+.spotify-floating .spotify-embed {
+  margin: 0;
+}
+.spotify-floating .spotify-embed iframe {
+  height: min(352px, calc(100dvh - 144px));
+}
+.spotify-floating .spotify-embed > button {
+  display: none;
+}
+.floating-timer-drag {
+  border: 0;
+  padding: 0;
+  cursor: grab;
+  touch-action: none;
+}
+@media (max-width: 1150px) {
+  .timer-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .timer-workspace > .timer-page > .page-heading {
+    margin-bottom: 10px;
+  }
+}
+@media (max-width: 560px) {
+  .spotify-floating {
+    right: 16px;
+    bottom: 90px;
+  }
+}
+.activity-indicator { position: relative; z-index: 35; }
+.activity-trigger { position: relative; display: grid; place-items: center; width: 42px; height: 42px; padding: 0; border: 1px solid var(--border); border-radius: 50%; background: var(--surface); color: var(--blue); cursor: pointer; }
+.activity-countdown { position: relative; display: grid; place-items: center; width: 36px; height: 36px; font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.activity-countdown svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.activity-countdown circle { fill: none; stroke-width: 3; }
+.activity-ring-track { stroke: var(--border); }
+.activity-ring-progress { stroke: var(--blue); stroke-linecap: round; transition: stroke-dasharray .3s linear; }
+.activity-spotify-dot { position: absolute; right: -4px; bottom: -3px; display: grid; place-items: center; color: #1db954; background: var(--surface); border-radius: 50%; }
+.activity-spotify-dot svg { width: 15px; height: 15px; }
+.activity-menu { position: absolute; right: 0; top: 100%; padding: 12px; width: 235px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 12px 38px rgba(22,39,60,.18); }
+.activity-menu-label { display: block; padding: 2px 7px 8px; font-size: 9px; font-weight: 700; letter-spacing: .1em; color: var(--muted); }
+.activity-menu button { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; padding: 8px; border: 0; border-radius: 9px; background: transparent; color: inherit; cursor: pointer; }
+.activity-menu button:hover, .activity-menu button:focus-visible { background: var(--blue-surface); }
+.activity-menu button > span:last-child { display: grid; min-width: 0; gap: 3px; }
+.activity-menu strong { font-size: 13px; }
+.activity-menu small { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.activity-menu-symbol { display: grid; place-items: center; width: 34px; height: 34px; flex: none; border-radius: 10px; background: var(--blue-surface); color: var(--blue); font-size: 23px; }
+.spotify-symbol { color: #1db954; }
+.spotify-current-floating { position: fixed; z-index: 29; right: 24px; bottom: 100px; display: flex; gap: 18px; align-items: start; width: min(300px, calc(100vw - 32px)); padding: 16px; border: 1px solid var(--border); border-radius: 15px; background: var(--surface); box-shadow: 0 12px 38px rgba(22,39,60,.18); }
+.spotify-current-copy { display: grid; gap: 5px; min-width: 0; flex: 1; }
+.spotify-current-copy strong, .spotify-current-copy > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.spotify-current-copy > span:last-child { color: var(--muted); font-size: 12px; }
+@media (prefers-reduced-motion: reduce) { .activity-ring-progress { transition: none; } }
+.spotify-floating.spotify-embed-only > :not(.spotify-embed):not(.spotify-floating-controls) { display: none; }
+.spotify-floating-controls { display: flex; justify-content: flex-end; padding: 4px; background: transparent; }
+.spotify-floating-controls.has-embed .spotify-current-copy { display: none; }
+.spotify-floating-controls:not(.has-embed) .spotify-current-copy { padding: 8px; background: var(--surface); border-radius: 10px; }
+.spotify-floating-controls .floating-timer-close { flex: none; margin-left: auto; background: var(--surface); color: var(--text); }
+.spotify-floating .spotify-embed iframe { height: min(352px, max(80px, calc(100dvh - 220px))); }
+.spotify-floating { max-height: calc(100dvh - 110px); overflow-y: auto; }

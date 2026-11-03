@@ -12,7 +12,8 @@
     "test": "node --import ./scripts/register-typescript.mjs --test ./scripts/study-api.test.mjs",
     "test:chat": "node --import ./scripts/register-typescript.mjs --test ./scripts/chat-retrieval.test.mjs",
     "test:timer": "node --import ./scripts/register-typescript.mjs --test ./scripts/timer.test.mjs",
-    "check:contracts": "tsc --ignoreConfig --noEmit --strict --skipLibCheck --target es2023 --module esnext --moduleResolution bundler scripts/backend-contracts.ts"
+    "check:contracts": "tsc --ignoreConfig --noEmit --strict --skipLibCheck --target es2023 --module esnext --moduleResolution bundler scripts/backend-contracts.ts",
+    "test:spotify": "node --import ./scripts/register-typescript.mjs --test ./scripts/spotify.test.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1147.0",
