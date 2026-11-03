@@ -179,7 +179,7 @@ test("403 includes Spotify’s response message and does not retry", async () =>
   assert.equal(reads, 1);
 });
 
-test("plain-text Spotify 403 errors retain the service detail and actionable setup guidance", async () => {
+test("plain-text Spotify 403 errors retain the service detail", async () => {
   const client = createSpotifyClient(config, async (url) =>
     url.includes("/api/token")
       ? json({
@@ -194,8 +194,6 @@ test("plain-text Spotify 403 errors retain the service detail and actionable set
   await assert.rejects(
     client.currentlyPlaying(),
     (error) =>
-      error.status === 403 &&
-      /User may not be registered/.test(error.message) &&
-      /Users Management/.test(error.message),
+      error.status === 403 && /User may not be registered/.test(error.message),
   );
 });

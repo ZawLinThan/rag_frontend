@@ -1,4 +1,3 @@
-import SpotifyPanel from "../components/SpotifyPanel";
 import { useState } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
 import PageHeading from "../components/PageHeading";
@@ -217,7 +216,6 @@ export default function TimerPage() {
             </p>
           )}
         </section>
-        <SpotifyPanel />
       </div>
     </div>
   );

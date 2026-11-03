@@ -10,6 +10,9 @@ const playbackSchema = z.object({
       uri: z.string(),
       type: z.string(),
       artists: z.array(z.object({ name: z.string() })).optional(),
+      album: z
+        .object({ images: z.array(z.object({ url: z.url() })) })
+        .optional(),
     })
     .nullish(),
 });
@@ -174,9 +177,11 @@ export function createSpotifyClient(
       );
     }
     const fallback =
-      res.status === 403
-        ? "Spotify denied access (403)."
-        : `Spotify request failed (${res.status}). Please try again.`;
+      res.status === 404
+        ? "No active Spotify device. Start playback in Spotify, then try again."
+        : res.status === 403
+          ? "Spotify denied access (403)."
+          : `Spotify request failed (${res.status}). Please try again.`;
     throw new SpotifyError(
       detail ? `${fallback} ${detail}` : fallback,
       res.status,
