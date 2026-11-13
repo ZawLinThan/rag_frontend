@@ -3,7 +3,7 @@ import {
   ConversationHistorySkeleton,
   SkeletonRegion,
 } from "../skeletons";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   Sparkles,
@@ -57,8 +57,11 @@ const ChatPage = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [restoredIds, setRestoredIds] = useState<string[] | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [busy, setBusy] = useState(false);
+  const [activity, setActivity] = useState<"sending" | "opening" | null>(null);
+  const busy = activity !== null;
   const lock = useRef(false);
+  const messageSequence = useRef(0);
+  const transcript = useRef<HTMLDivElement>(null);
   const [error, setError] = useState("");
   const course = selectedCourse || data.courses[0]?.id || "";
   const scopedNotebooks = data.notebooks.filter(
@@ -81,7 +84,13 @@ const ChatPage = () => {
   const scopeChanged =
     restoredIds === null && session !== null && session.scope !== scope;
 
+  useEffect(() => {
+    const element = transcript.current;
+    if (element) element.scrollTop = element.scrollHeight;
+  }, [messages, activity, data.isPending, data.error]);
+
   const reset = () => {
+    if (lock.current) return;
     setSession(null);
     setRestoredIds(null);
     setMessages([]);
@@ -99,34 +108,36 @@ const ChatPage = () => {
       setError("No ready documents are available in this selection.");
       return;
     }
+    const text = result.data.question;
+    const pendingMessage: ChatMessage = {
+      id: `outgoing-${++messageSequence.current}`,
+      role: "user",
+      text,
+    };
     lock.current = true;
-    setBusy(true);
+    setActivity("sending");
     setError("");
+    setQuestion("");
+    setMessages((previous) =>
+      scopeChanged ? [pendingMessage] : [...previous, pendingMessage],
+    );
+    let activeSession = session;
     try {
-      let activeSession = session;
-      if (
-        !activeSession ||
-        (restoredIds === null && activeSession.scope !== scope)
-      ) {
+      if (!activeSession || scopeChanged) {
         const id = await createChatSession(sources.map((item) => item.id));
         activeSession = { id, scope };
         setSession(activeSession);
-        setMessages([]);
         void queryClient.invalidateQueries({
           queryKey: ["study", "chat-sessions"],
         });
       }
-      const answer = await sendChatMessage(
-        activeSession.id,
-        result.data.question,
-      );
+      const answer = await sendChatMessage(activeSession.id, text);
       setMessages((previous) => [
-        ...previous,
-        {
-          id: answer.userMessage.id,
-          role: "user",
-          text: answer.userMessage.content,
-        },
+        ...previous.map((message) =>
+          message.id === pendingMessage.id
+            ? { ...message, text: answer.userMessage.content }
+            : message,
+        ),
         {
           id: answer.assistantMessage.id,
           role: "assistant",
@@ -134,11 +145,16 @@ const ChatPage = () => {
           sources: answer.sources,
         },
       ]);
-      setQuestion("");
       void queryClient.invalidateQueries({
         queryKey: ["study", "chat-sessions"],
       });
     } catch (cause) {
+      setMessages((previous) =>
+        scopeChanged && activeSession === session
+          ? messages
+          : previous.filter((message) => message.id !== pendingMessage.id),
+      );
+      setQuestion(value);
       setError(
         cause instanceof Error
           ? cause.message
@@ -146,14 +162,14 @@ const ChatPage = () => {
       );
     } finally {
       lock.current = false;
-      setBusy(false);
+      setActivity(null);
     }
   };
 
   const openSession = async (id: string) => {
     if (lock.current) return;
     lock.current = true;
-    setBusy(true);
+    setActivity("opening");
     setError("");
     try {
       const saved = await getChatSession(id);
@@ -186,7 +202,7 @@ const ChatPage = () => {
       );
     } finally {
       lock.current = false;
-      setBusy(false);
+      setActivity(null);
     }
   };
 
@@ -307,7 +323,12 @@ const ChatPage = () => {
               </span>
               <span className="scope-count">{sources.length} ready</span>
             </div>
-            <div className="chat-messages" aria-live="polite">
+            <div
+              className="chat-messages"
+              role="log"
+              aria-label="Conversation"
+              ref={transcript}
+            >
               {messages.length === 0 ? (
                 <div className="chat-welcome">
                   <span className="welcome-orbit">
@@ -394,10 +415,23 @@ const ChatPage = () => {
                   </div>
                 ))
               )}
-              {busy && (
-                <p role="status">
-                  Searching your documents and preparing an answer…
-                </p>
+              {activity === "sending" && (
+                <div className="message assistant chat-searching" role="status">
+                  <span className="message-avatar" aria-hidden="true">
+                    <Sparkles size={16} />
+                  </span>
+                  <span className="chat-searching-label">
+                    Searching your notes
+                    <span className="chat-searching-dots" aria-hidden="true">
+                      <span />
+                      <span />
+                      <span />
+                    </span>
+                  </span>
+                </div>
+              )}
+              {activity === "opening" && (
+                <p role="status">Opening conversation…</p>
               )}
             </div>
             {scopeChanged && (
@@ -419,7 +453,8 @@ const ChatPage = () => {
                 value={question}
                 onChange={(event) => setQuestion(event.target.value)}
                 rows={2}
-                disabled={busy || !sources.length}
+                readOnly={busy}
+                disabled={!sources.length}
                 onKeyDown={(event) => {
                   if (
                     event.key === "Enter" &&

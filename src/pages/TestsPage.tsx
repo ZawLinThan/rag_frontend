@@ -94,11 +94,8 @@ const TestsPage = () => {
                     mode === "reference"
                       ? (reference?.document.id ?? null)
                       : null,
-                  referenceUrl:
+                  referenceUrl: null
                     /** redesign, publicUrl is/will be deleted*/
-                    mode === "reference"
-                      ? (reference?.publicUrl ?? null)
-                      : null,
                 },
                 {
                   onSuccess: (test) => {

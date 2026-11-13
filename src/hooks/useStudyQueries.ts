@@ -23,6 +23,7 @@ export const studyKeys = {
   notebooks: ["study", "notebooks"] as const,
   courseNotebooks: (id: string) => ["study", "course-notebooks", id] as const,
   documents: ["study", "documents"] as const,
+  notebookDocumentLists: ["study", "notebook-documents"] as const,
   notebookDocuments: (id: string) =>
     ["study", "notebook-documents", id] as const,
   document: (id: string) => ["study", "document", id] as const,
@@ -152,8 +153,14 @@ export const reconcileStudyMutation = <TInput, TResult>(
 
   if (operation === api.deleteDocument) {
     const id = input as string;
-    client.setQueryData<Document[]>(studyKeys.documents, (previous) =>
-      previous?.filter((item) => item.id !== id),
+    const removeFromList = (previous: Document[] | undefined) =>
+      previous?.some((item) => item.id === id)
+        ? previous.filter((item) => item.id !== id)
+        : previous;
+    client.setQueryData<Document[]>(studyKeys.documents, removeFromList);
+    client.setQueriesData<Document[]>(
+      { queryKey: studyKeys.notebookDocumentLists },
+      removeFromList,
     );
     client.setQueryData<FlashcardSet[]>(studyKeys.sets, (previous) =>
       previous?.map((set) =>
@@ -238,10 +245,19 @@ export const useStudyMutation = <TInput, TResult>(
   return useMutation({
     mutationFn,
     onSuccess: async (result, input) => {
+      const deletingDocument = (mutationFn as unknown) === api.deleteDocument;
+      if (deletingDocument) {
+        // A list read started before the delete can still contain the old row.
+        await Promise.all([
+          client.cancelQueries({ queryKey: studyKeys.documents }),
+          client.cancelQueries({ queryKey: studyKeys.notebookDocumentLists }),
+        ]);
+      }
       reconcileStudyMutation(client, mutationFn, input, result);
       // Broad invalidation is deliberate: document/deck changes affect counts,
       // notebook scopes, chat sources, lists, details, and generated resources.
-      await client.invalidateQueries({ queryKey: studyKeys.all });
+      const refresh = client.invalidateQueries({ queryKey: studyKeys.all });
+      if (!deletingDocument) await refresh;
     },
   });
 };

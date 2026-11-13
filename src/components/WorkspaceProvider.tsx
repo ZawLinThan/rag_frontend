@@ -67,12 +67,18 @@ const WorkspaceProvider = ({ children }: ChildrenProps) => {
           courseMutation.mutate({ name, code: null, semester: null }),
         addNotebook: (courseId, noteBookName) =>
           notebookMutation.mutate({ courseId, noteBookName }),
-        addDocument: (file, courseId, notebook) => {
+        addDocument: (file, courseId, notebook, hasMathFormula) => {
           const notebookId = data.notebooks.find(
             (item) =>
               item.courseId === courseId && item.noteBookName === notebook,
           )?.id;
-          if (notebookId) uploadMutation.mutate({ file, courseId, notebookId });
+          if (notebookId)
+            uploadMutation.mutate({
+              file,
+              courseId,
+              notebookId,
+              hasMathFormula,
+            });
         },
         removeDocument: (id) => deleteMutation.mutate(id),
       }}

@@ -816,6 +816,19 @@ textarea::placeholder {
   padding: 5px;
   background: none;
 }
+.upload-formula-choices {
+  margin-top: 16px;
+}
+.upload-formula-choices fieldset {
+  border: 0;
+  padding: 8px 0;
+}
+.upload-formula-choices fieldset label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 18px 0 0;
+}
 .helper {
   margin-top: 12px;
   font-size: 10px !important;
@@ -2308,6 +2321,44 @@ footer {
 }
 .study-assistant .message strong {
   font-size: 12px;
+}
+.chat-searching {
+  align-items: center;
+  color: var(--muted);
+}
+.chat-searching-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.chat-searching-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: chat-search-pulse 1.2s ease-in-out infinite;
+}
+.chat-searching-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.chat-searching-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes chat-search-pulse {
+  0%,
+  60%,
+  100% {
+    opacity: 0.45;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-searching-dots span {
+    animation: none;
+  }
 }
 .study-assistant .source-panel {
   align-self: stretch;

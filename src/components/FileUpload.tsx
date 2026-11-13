@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { UploadCloud } from "lucide-react";
 import { useStudyMutation } from "../hooks/useStudyQueries";
 import { uploadDocument } from "../lib/studyApi";
@@ -23,42 +23,64 @@ const FileUpload = ({
   disabled?: boolean;
 }) => {
   const upload = useStudyMutation(uploadDocument);
+  const formId = useId();
   const [messages, setMessages] = useState<string[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
+  const [pendingFiles, setPendingFiles] = useState<
+    { file: File; hasMathFormula: boolean | null }[]
+  >([]);
   const [busy, setBusy] = useState(false);
   const lock = useRef(false);
   const unavailable = disabled || busy || !courseId || !notebookId;
 
-  const handleFiles = async (files: FileList | null) => {
+  const handleFiles = (files: FileList | null) => {
     if (!files || unavailable || lock.current) return;
+    setMessages([]);
+    setErrors([]);
+    const valid: { file: File; hasMathFormula: null }[] = [];
+    for (const file of Array.from(files).slice(
+      0,
+      multiple ? files.length : 1,
+    )) {
+      if (
+        !uploadSchema.safeParse({
+          name: file.name,
+          size: file.size,
+          courseId,
+          notebookId,
+        }).success
+      ) {
+        setErrors((items) => [
+          ...items,
+          `${file.name}: choose a non-empty PDF, DOCX, or TXT file up to 20 MB.`,
+        ]);
+      } else {
+        valid.push({ file, hasMathFormula: null });
+      }
+    }
+    setPendingFiles(valid);
+  };
+
+  const uploadFiles = async () => {
+    if (
+      unavailable ||
+      lock.current ||
+      pendingFiles.some((item) => item.hasMathFormula === null)
+    )
+      return;
     lock.current = true;
     setBusy(true);
     setMessages([]);
     setErrors([]);
     try {
-      for (const file of Array.from(files).slice(
-        0,
-        multiple ? files.length : 1,
-      )) {
-        if (
-          !uploadSchema.safeParse({
-            name: file.name,
-            size: file.size,
-            courseId,
-            notebookId,
-          }).success
-        ) {
-          setErrors((items) => [
-            ...items,
-            `${file.name}: choose a non-empty PDF, DOCX, or TXT file up to 20 MB.`,
-          ]);
-          continue;
-        }
+      const failed: typeof pendingFiles = [];
+      for (const { file, hasMathFormula } of pendingFiles) {
         try {
           const result = await upload.mutateAsync({
             file,
             courseId,
             notebookId,
+            hasMathFormula: hasMathFormula === true,
           });
           setMessages((items) => [
             ...items,
@@ -66,12 +88,14 @@ const FileUpload = ({
           ]);
           onUploaded?.(result);
         } catch (error) {
+          failed.push({ file, hasMathFormula });
           setErrors((items) => [
             ...items,
             `${file.name}: ${error instanceof Error ? error.message : "Upload failed."}`,
           ]);
         }
       }
+      setPendingFiles(failed);
     } finally {
       lock.current = false;
       setBusy(false);
@@ -84,7 +108,7 @@ const FileUpload = ({
         onDragOver={(event) => event.preventDefault()}
         onDrop={(event) => {
           event.preventDefault();
-          void handleFiles(event.dataTransfer.files);
+          handleFiles(event.dataTransfer.files);
         }}
       >
         <UploadCloud size={30} />
@@ -96,11 +120,53 @@ const FileUpload = ({
           multiple={multiple}
           accept=".pdf,.docx,.txt"
           onChange={(event) => {
-            void handleFiles(event.target.files);
+            handleFiles(event.target.files);
             event.target.value = "";
           }}
         />
       </label>
+      {pendingFiles.length > 0 && (
+        <div className="upload-formula-choices">
+          {pendingFiles.map(({ file, hasMathFormula }, index) => (
+            <fieldset key={`${file.name}-${index}`} disabled={busy}>
+              <legend>Does {file.name} contain mathematical formulas?</legend>
+              {[true, false].map((answer) => (
+                <label key={String(answer)}>
+                  <input
+                    type="radio"
+                    name={`${formId}-formula-${index}`}
+                    checked={hasMathFormula === answer}
+                    onChange={() =>
+                      setPendingFiles((items) =>
+                        items.map((item, i) =>
+                          i === index
+                            ? { ...item, hasMathFormula: answer }
+                            : item,
+                        ),
+                      )
+                    }
+                  />
+                  {answer ? "Yes" : "No"}
+                </label>
+              ))}
+            </fieldset>
+          ))}
+          <p className="helper">
+            For PDFs, selecting Yes uses formula-aware extraction.
+          </p>
+          <button
+            type="button"
+            className="button"
+            disabled={
+              unavailable ||
+              pendingFiles.some((item) => item.hasMathFormula === null)
+            }
+            onClick={() => void uploadFiles()}
+          >
+            {busy ? "Uploading…" : "Upload files"}
+          </button>
+        </div>
+      )}
       {!courseId || !notebookId ? (
         <p className="helper">Choose a course and notebook before uploading.</p>
       ) : null}

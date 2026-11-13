@@ -27,6 +27,7 @@ export type Document = {
   r2Key: string;
   fileType: string;
   fileSize: number;
+  hasMathFormula: boolean;
   status: DocumentStatus;
   errorMessage: string | null;
   courseId: string | null;

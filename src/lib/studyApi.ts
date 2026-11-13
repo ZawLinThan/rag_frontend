@@ -1,7 +1,6 @@
 import {
   sampleCourses,
   sampleDocuments,
-  sampleNotebooks,
   studyCards,
   sampleWorkspace,
 } from "../data/sampleData";
@@ -41,13 +40,11 @@ const response = async <T>(value: T): Promise<T> => clone(value);
 const timestamp = () => new Date().toISOString();
 const userId = "sample-user";
 let courses = clone(sampleCourses);
-let notebooks = clone(sampleNotebooks);
 let documents = clone(sampleDocuments);
 let sets: FlashcardSet[] = [];
 let cards: Flashcard[] = [];
 let tests: Test[] = [];
 let contents: TestContent[] = [];
-const referenceUrls = new Map<string, string>();
 
 /** Build a sample card with scheduling defaults. */
 const makeCard = (setId: string, input: CardInput): Flashcard => {
@@ -187,8 +184,6 @@ export const createCourse = async (
 ): Promise<Course> => {
   const { data } = await api.post<Course>("/api/courses", input);
   return data;
-
-  return null;
 };
 
 /**
@@ -201,18 +196,6 @@ export const createNotebook = async (
 ): Promise<NoteBook> => {
   const { data } = await api.post<NoteBook>("/api/notebooks", input);
   return data;
-
-  const name = requireText(input.noteBookName, 255, "Notebook name");
-  if (
-    notebooks.some(
-      (item) =>
-        item.courseId === input.courseId &&
-        item.noteBookName.toLowerCase() === name.toLowerCase(),
-    )
-  ) {
-    throw new Error("That notebook already exists in this course.");
-  }
-  return null;
 };
 
 /**
@@ -280,6 +263,7 @@ export const uploadDocument = async (
       r2Key: signed.key,
       fileType: input.file.type,
       fileSize: input.file.size,
+      hasMathFormula: input.hasMathFormula,
       courseId: input.courseId,
       notebookId: input.notebookId,
     },
@@ -353,11 +337,20 @@ export const getFlashcards = async (setId: string): Promise<Flashcard[]> => {
  * @returns Created flashcard set.
  */
 export const createFlashcardSet = async (
-  input: CreateSetInput,
+  _input: CreateSetInput,
 ): Promise<FlashcardSet> => {
   // const { data } = await api.post<FlashcardSet>("/api/flashcards", input);
   // return data;
-  return null;
+  const dummy: FlashcardSet = {
+    id: "sample-id",
+    userId: "sample-user",
+    title: "Sample Title",
+    courseId: "sample-course-id",
+    documentId: null,
+    createdAt: timestamp(),
+    updatedAt: timestamp(),
+  };
+  return dummy;
 };
 
 /**
@@ -366,11 +359,20 @@ export const createFlashcardSet = async (
  * @returns Created set metadata; cards are fetched separately.
  */
 export const generateFlashcards = async (
-  input: GenerateFlashcardsInput,
+  _input: GenerateFlashcardsInput,
 ): Promise<FlashcardSet> => {
   // const { data } = await api.post<FlashcardSet>("/api/flashcards/generate", input);
   // return data;
-  return null;
+  const dummy: FlashcardSet = {
+    id: "sample-id",
+    userId: "sample-user",
+    title: "Sample Title",
+    courseId: "sample-course-id",
+    documentId: null,
+    createdAt: timestamp(),
+    updatedAt: timestamp(),
+  };
+  return dummy;
 };
 
 /**
@@ -387,7 +389,21 @@ export const addFlashcard = async ({
   //   input,
   // );
   // return data;
-  return null;
+  console.log(input); 
+  const dummy: Flashcard = {
+    id: "",
+    setId: "",
+    front: "",
+    back: "",
+    sourceChunkId: "",
+    easeFactor: 0,
+    interval: 0,
+    repetitions: 0,
+    nextReviewAt: "",
+    createdAt: "",
+    updatedAt: ""
+  }
+  return dummy;
 };
 
 /**
@@ -405,7 +421,21 @@ export const updateFlashcard = async ({
   //   input,
   // );
   // return data;
-  return null;
+  console.log(input); 
+  const dummy:Flashcard = {
+    id: "",
+    setId: "",
+    front: "",
+    back: "",
+    sourceChunkId: "",
+    easeFactor: 0,
+    interval: 0,
+    repetitions: 0,
+    nextReviewAt: "",
+    createdAt: "",
+    updatedAt: ""
+  }
+  return dummy; 
 };
 
 /**
@@ -432,7 +462,7 @@ export const deleteFlashcard = async ({
  * @param id - Owned set ID.
  * @returns No body (204).
  */
-export const deleteFlashcardSet = async (id: string): Promise<void> => {
+export const deleteFlashcardSet = async (_id: string): Promise<void> => {
   // await api.delete(`/api/flashcards/${encodeURIComponent(id)}`);
   // return;
 };
@@ -481,11 +511,19 @@ export const getTestContent = async (id: string): Promise<TestContent> => {
  * @param input - Title, notebook, mode, and optional reference file/URL.
  * @returns Persisted test metadata; content is fetched separately.
  */
-export const generateTest = async (input: GenerateTestInput): Promise<Test> => {
+export const generateTest = async (_input: GenerateTestInput): Promise<Test> => {
   // const { data } = await api.post<Test>("/api/tests/generate", input);
   // return data;
 
-  return null;
+  const dummy: Test = {
+    id: "",
+    userId: "",
+    title: "",
+    referenceFileId: "",
+    createdAt: "",
+    updatedAt: ""
+  }
+  return dummy;
 };
 
 /**
@@ -493,7 +531,7 @@ export const generateTest = async (input: GenerateTestInput): Promise<Test> => {
  * @param id - Owned test ID.
  * @returns No body (204).
  */
-export const deleteTest = async (id: string): Promise<void> => {
+export const deleteTest = async (_id: string): Promise<void> => {
   // await api.delete(`/api/tests/${encodeURIComponent(id)}`);
   // return;
 };

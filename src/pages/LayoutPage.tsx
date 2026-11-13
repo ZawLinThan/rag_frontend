@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { ActivityContext } from "../context/ActivityContext";
 import type { Playback } from "../lib/spotify/client";
-import SpotifyPanel from "../components/SpotifyPanel";
+import MusicPanel from "../components/MusicPanel";
 import { NavLink, Outlet, Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -35,6 +35,9 @@ const LayoutPage = () => {
   const { user } = useAuthStore();
   const [playback, setPlayback] = useState<Playback | null>(null);
   const [spotifyLoaded, setSpotifyLoaded] = useState(false);
+  const [musicProvider, setMusicProvider] = useState<
+    "spotify" | "youtube" | "apple"
+  >("spotify");
   const [spotifyOpen, setSpotifyOpen] = useState(false);
   const openSpotify = useCallback(() => setSpotifyOpen(true), []);
   const closeSpotify = useCallback(() => setSpotifyOpen(false), []);
@@ -43,7 +46,7 @@ const LayoutPage = () => {
   return (
     <TimerProvider key={user?.id} userId={user?.id ?? "anonymous"}>
       <ActivityContext.Provider
-        value={{ playback, spotifyLoaded, openSpotify }}
+        value={{ playback, spotifyLoaded, openSpotify, musicProvider }}
       >
         <div className="app-layout">
           <aside className="sidebar">
@@ -86,7 +89,8 @@ const LayoutPage = () => {
           <div className="main-shell">
             <main className={timerPage ? "timer-workspace" : undefined}>
               <Outlet />
-              <SpotifyPanel
+              <MusicPanel
+                onProviderChange={setMusicProvider}
                 onPlayback={setPlayback}
                 onContentChange={setSpotifyLoaded}
                 floatingOpen={spotifyOpen}

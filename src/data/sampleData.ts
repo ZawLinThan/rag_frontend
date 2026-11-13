@@ -118,6 +118,7 @@ export const sampleDocuments: Document[] = sampleWorkspace.documents.map(
       name: document.name,
       originalName: document.name,
       fileType: "pdf",
+      hasMathFormula: false,
       fileSize: Math.round(Number.parseFloat(document.size) * 1024 * 1024),
       status: "ready",
       r2Key: `samples/${document.id}.pdf`,
