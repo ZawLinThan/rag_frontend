@@ -1,6 +1,7 @@
+import { SearchField } from "../components/StudySurfaces";
 import { CoursesContentSkeleton } from "../skeletons";
 import { useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useStudyData, useStudyMutation } from "../hooks/useStudyQueries";
 import { createCourse } from "../lib/studyApi";
 import CourseCardGrid from "../components/CourseCardGrid";
@@ -22,7 +23,7 @@ const CoursesPage = () => {
       .includes(search.toLowerCase()),
   );
   return (
-    <>
+    <div className="courses-page study-page">
       <PageHeading
         title="My courses"
         description="Organize each course into notebooks, then bring your notes to life."
@@ -119,15 +120,14 @@ const CoursesPage = () => {
       />
       {!data.isPending && !data.error && (
         <>
-          <div className="search-field">
-            <Search size={18} />
+          <SearchField>
             <input
               aria-label="Search courses"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search your courses…"
             />
-          </div>
+          </SearchField>
           <CourseCardGrid
             courses={data.courses}
             documents={data.documents}
@@ -143,7 +143,7 @@ const CoursesPage = () => {
           )}
         </>
       )}
-    </>
+    </div>
   );
 };
 

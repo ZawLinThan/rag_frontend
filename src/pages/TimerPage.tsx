@@ -28,7 +28,7 @@ export default function TimerPage() {
   const displayed = idle ? (valid ? amount * 60_000 : 0) : remainingMs;
   const progress = idle ? 0 : 1 - remainingMs / timer.durationMs;
   return (
-    <div className="timer-page">
+    <div className="timer-page study-page">
       <PageHeading
         title="Focus timer"
         description="Make a little space for the work that matters."

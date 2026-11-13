@@ -217,7 +217,7 @@ const ChatPage = () => {
     );
 
   return (
-    <div className="study-assistant">
+    <div className="study-assistant study-page">
       <PageHeading
         title="Study assistant"
         description="A little more clarity, one question at a time."
@@ -421,7 +421,6 @@ const ChatPage = () => {
                     <Sparkles size={16} />
                   </span>
                   <span className="chat-searching-label">
-                    Searching your notes
                     <span className="chat-searching-dots" aria-hidden="true">
                       <span />
                       <span />

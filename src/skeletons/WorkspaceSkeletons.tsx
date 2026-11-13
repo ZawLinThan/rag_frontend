@@ -1,53 +1,28 @@
-import type { ReactNode } from "react";
+import { Plus } from "lucide-react";
+import {
+  HeadingSkeleton,
+  SkeletonIcon as Icon,
+  SkeletonText,
+} from "./components";
+import { MusicProviderSelector } from "../components/MusicProviderSelector";
 import "../timer.css";
 
-/** Keep the real font metrics and line wrapping while replacing the ink. */
-export const SkeletonText = ({ children }: { children: ReactNode }) => (
-  <span className="skeleton sk-text">{children}</span>
-);
-const Icon = ({ size = 17 }: { size?: number }) => (
-  <svg
-    className="skeleton sk-ui-icon"
-    width={size}
-    height={size}
-    style={{ width: size, height: size }}
-    aria-hidden="true"
-  />
-);
 export const WorkspaceHeadingSkeleton = ({
   timer = false,
 }: {
   timer?: boolean;
 }) => (
-  <div className="page-heading">
-    <div className="page-heading-copy">
-      <h1>
-        <SkeletonText>{timer ? "Focus timer" : "Study assistant"}</SkeletonText>
-      </h1>
-      <p>
-        <SkeletonText>
-          {timer
-            ? "Make a little space for the work that matters."
-            : "A little more clarity, one question at a time."}
-        </SkeletonText>
-      </p>
-    </div>
-    <div className="page-heading-actions">
-      {!timer && (
-        <button className="button" disabled>
-          <Icon size={16} />
-          <SkeletonText>New conversation</SkeletonText>
-        </button>
-      )}
-      <button
-        className="button theme-toggle"
-        disabled
-        aria-label="Loading appearance"
-      >
-        <Icon size={16} />
-      </button>
-    </div>
-  </div>
+  <HeadingSkeleton
+    title={timer ? "Focus timer" : "Study assistant"}
+    description={
+      timer
+        ? "Make a little space for the work that matters."
+        : "A little more clarity, one question at a time."
+    }
+    action={timer ? undefined : "New conversation"}
+    icon={<Plus size={16} />}
+    primary={false}
+  />
 );
 export const TimerMainSkeleton = () => (
   <section className="timer-main">
@@ -63,7 +38,7 @@ export const TimerMainSkeleton = () => (
           <SkeletonText>One thing at a time. You’ve got this.</SkeletonText>
         </p>
       </div>
-      <span className="timer-state">
+      <span className="timer-state idle">
         <span />
         <SkeletonText>Ready</SkeletonText>
       </span>
@@ -89,7 +64,11 @@ export const TimerMainSkeleton = () => (
     <div className="timer-duration-controls">
       <div className="timer-duration-options">
         {["25 min", "50 min", "10 min", "Custom"].map((label) => (
-          <button className="button timer-duration-button" disabled key={label}>
+          <button
+            className={`button timer-duration-button${label === "25 min" ? " selected" : ""}`}
+            type="button"
+            key={label}
+          >
             <SkeletonText>{label}</SkeletonText>
           </button>
         ))}
@@ -117,14 +96,14 @@ export const ConversationHistorySkeleton = ({
 }) => (
   <>
     {Array.from({ length: count }, (_, i) => (
-      <div className="chat-history-item" key={i}>
+      <button className="chat-history-item" type="button" key={i}>
         <strong>
           <SkeletonText>A recent conversation</SkeletonText>
         </strong>
         <small>
           <SkeletonText>10/31/2026</SkeletonText>
         </small>
-      </div>
+      </button>
     ))}
   </>
 );
@@ -256,6 +235,7 @@ export const AssistantSourcesSkeleton = () => (
 
 export const SpotifyPanelSkeleton = () => (
   <section className="spotify-panel">
+    <MusicProviderSelector provider="spotify" />
     <div className="spotify-heading">
       <div>
         <span className="timer-eyebrow">

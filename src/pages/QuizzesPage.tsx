@@ -20,7 +20,7 @@ const QuizzesPage = () => {
     setScore(0);
   };
   return (
-    <>
+    <div className="quizzes-page study-page">
       <PageHeading
         title="Practice quizzes"
         description="Check your knowledge in a calm, low-pressure space."
@@ -117,7 +117,7 @@ const QuizzesPage = () => {
           </button>
         </section>
       )}
-    </>
+    </div>
   );
 };
 

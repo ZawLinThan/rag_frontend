@@ -11,9 +11,10 @@ const SettingsForm = () => {
   const [name, setName] = useState(user?.user_metadata.full_name || "");
   const [goal, setGoal] = useState("20");
   const [message, setMessage] = useState("");
+  const [failed, setFailed] = useState(false);
 
   return (
-    <>
+    <div className="settings-page study-page">
       <PageHeading
         title="Settings"
         description="A study space that works for you."
@@ -25,9 +26,11 @@ const SettingsForm = () => {
             e.preventDefault();
             const result = settingsSchema.safeParse({ name, goal });
             if (!result.success) {
+              setFailed(true);
               setMessage(result.error.issues[0].message);
               return;
             }
+            setFailed(false);
             setMessage(
               "Preferences updated for this screen. Persistent profile settings will be connected with the backend.",
             );
@@ -51,7 +54,10 @@ const SettingsForm = () => {
         </form>
 
         {message && (
-          <p role="status" className="notice">
+          <p
+            role={failed ? "alert" : "status"}
+            className={failed ? "error" : "notice"}
+          >
             {message}
           </p>
         )}
@@ -64,7 +70,11 @@ const SettingsForm = () => {
             className="button"
             onClick={async () => {
               const result = await supabase?.auth.signOut();
-              setMessage(result?.error ? result.error.message : "Signed out.");
+              if (result?.error) {
+                setFailed(true);
+                setMessage(result.error.message);
+                return;
+              }
               navigate("/login", { replace: true });
             }}
           >
@@ -72,7 +82,7 @@ const SettingsForm = () => {
           </button>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 

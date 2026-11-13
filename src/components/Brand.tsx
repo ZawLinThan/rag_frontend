@@ -6,7 +6,7 @@ const Brand = () => {
       <span className="brand-mark">
         <BookOpen size={22} />
       </span>
-      folio<span className="brand-dot">.</span>
+      folio
     </Link>
   );
 };

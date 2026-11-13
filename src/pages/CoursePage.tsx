@@ -86,7 +86,7 @@ const CoursePage = () => {
     );
 
   return (
-    <>
+    <div className="course-page study-page">
       <Link className="back-link" to="/courses">
         <ArrowLeft size={16} /> My courses
       </Link>
@@ -261,7 +261,7 @@ const CoursePage = () => {
           </Link>
         </>
       )}
-    </>
+    </div>
   );
 };
 

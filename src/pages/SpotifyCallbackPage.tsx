@@ -25,9 +25,11 @@ export default function SpotifyCallbackPage() {
   }, [navigate]);
   return (
     <main>
-      <section className="panel">
+      <section className="panel completion route-message">
         <h1>Connect Spotify</h1>
-        <p role="status">{error || "Finishing your Spotify connection…"}</p>
+        <p role={error ? "alert" : "status"}>
+          {error || "Finishing your Spotify connection…"}
+        </p>
         {error && (
           <Link className="button" to="/timer">
             Back to focus timer

@@ -8,7 +8,6 @@ import {
   uploadDocument,
 } from "../lib/studyApi";
 import { formatFileSize } from "../lib/utils";
-import QueryState from "./QueryState";
 import { useLocation } from "react-router-dom";
 import { LayoutPageSkeleton } from "../skeletons";
 import type { ChildrenProps } from "../types/study";
@@ -28,14 +27,6 @@ const WorkspaceProvider = ({ children }: ChildrenProps) => {
   const deleteMutation = useStudyMutation(deleteDocument);
   if (data.isPending && !data.error)
     return <LayoutPageSkeleton pathname={pathname} />;
-  if (data.error)
-    return (
-      <QueryState
-        pending={data.isPending}
-        error={data.error}
-        retry={data.refetch}
-      />
-    );
   return (
     <WorkspaceContext.Provider
       value={{

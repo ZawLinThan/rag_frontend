@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ListSkeleton, SkeletonRegion } from "../skeletons";
+import { SkeletonRegion } from "../skeletons";
 
 const QueryState = ({
   pending,
@@ -24,11 +24,7 @@ const QueryState = ({
       </div>
     );
   if (pending)
-    return (
-      <SkeletonRegion label="Loading content">
-        {skeleton ?? <ListSkeleton />}
-      </SkeletonRegion>
-    );
+    return <SkeletonRegion label="Loading content">{skeleton}</SkeletonRegion>;
   return null;
 };
 

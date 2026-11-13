@@ -1,5 +1,5 @@
 import { useId, useRef, useState } from "react";
-import { UploadCloud } from "lucide-react";
+import { UploadDropzone } from "./UploadDropzone";
 import { useStudyMutation } from "../hooks/useStudyQueries";
 import { uploadDocument } from "../lib/studyApi";
 import type { UploadResult } from "../types";
@@ -103,28 +103,20 @@ const FileUpload = ({
   };
   return (
     <div>
-      <label
-        className={`dropzone ${unavailable ? "upload-disabled" : ""}`}
-        onDragOver={(event) => event.preventDefault()}
+      <UploadDropzone
+        label={label}
+        busy={busy}
+        unavailable={unavailable}
+        multiple={multiple}
         onDrop={(event) => {
           event.preventDefault();
           handleFiles(event.dataTransfer.files);
         }}
-      >
-        <UploadCloud size={30} />
-        <strong>{busy ? "Adding your file…" : label}</strong>
-        <span>PDF, DOCX, TXT · Up to 20 MB per file</span>
-        <input
-          type="file"
-          disabled={unavailable}
-          multiple={multiple}
-          accept=".pdf,.docx,.txt"
-          onChange={(event) => {
-            handleFiles(event.target.files);
-            event.target.value = "";
-          }}
-        />
-      </label>
+        onChange={(event) => {
+          handleFiles(event.target.files);
+          event.target.value = "";
+        }}
+      />
       {pendingFiles.length > 0 && (
         <div className="upload-formula-choices">
           {pendingFiles.map(({ file, hasMathFormula }, index) => (

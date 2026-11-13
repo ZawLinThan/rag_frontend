@@ -1,3 +1,3 @@
 export * from "./components";
 export * from "./pages";
-export * from "./WorkspaceSkeletons";
+export { ConversationHistorySkeleton } from "./WorkspaceSkeletons";

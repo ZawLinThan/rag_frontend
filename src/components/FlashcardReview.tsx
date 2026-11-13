@@ -1,9 +1,16 @@
 import { useState } from "react";
 import { ArrowRight, Check, Layers, RotateCcw } from "lucide-react";
+import { SkeletonRegion, SkeletonText } from "../skeletons/components";
 import type { Flashcard } from "../types";
 
 /** Session-only recall; no backend rating endpoint exists yet. */
-const FlashcardReview = ({ cards }: { cards: Flashcard[] }) => {
+const FlashcardReview = ({
+  cards,
+  loading = false,
+}: {
+  cards: Flashcard[];
+  loading?: boolean;
+}) => {
   const [queue, setQueue] = useState(cards);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -24,6 +31,42 @@ const FlashcardReview = ({ cards }: { cards: Flashcard[] }) => {
     setIndex((value) => value + 1);
     setFlipped(false);
   };
+  if (loading)
+    return (
+      <SkeletonRegion label="Loading flashcard review">
+        <div className="fc-review">
+          <div className="fc-row">
+            <span className="fc-label">
+              <SkeletonText>Card 1 / 10</SkeletonText>
+            </span>
+            <span className="muted">
+              <SkeletonText>0 recalled · 0 to revisit</SkeletonText>
+            </span>
+          </div>
+          <progress value={0} max={10} />
+          <button className="flashcard" type="button">
+            <span className="eyebrow">
+              <Layers size={16} /> QUESTION
+            </span>
+            <h2>
+              <SkeletonText>Question about your course</SkeletonText>
+            </h2>
+            <span className="muted">
+              Think of your answer, then click to reveal
+            </span>
+          </button>
+          <div className="inline-actions centered review-actions">
+            <button className="button primary" type="button">
+              Reveal answer <ArrowRight size={16} />
+            </button>
+          </div>
+          <p className="fc-note centered">
+            Recall results are for this session. Scheduled reviews are not
+            available yet.
+          </p>
+        </div>
+      </SkeletonRegion>
+    );
   return (
     <div className="fc-review">
       {current ? (

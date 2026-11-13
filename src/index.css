@@ -140,10 +140,6 @@ svg {
   height: 37px;
   border-radius: 11px;
 }
-.brand-dot {
-  color: var(--muted);
-  margin-left: -8px;
-}
 .workspace-label {
   font-size: 10px;
   letter-spacing: 1.5px;
@@ -1739,7 +1735,6 @@ progress {
   background: var(--blue-surface);
   color: var(--blue);
 }
-.brand-dot,
 .hero-label,
 .course-code,
 .source-list a,
@@ -2326,6 +2321,11 @@ footer {
   align-items: center;
   color: var(--muted);
 }
+.chat-searching-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 .chat-searching-dots {
   display: inline-flex;
   gap: 4px;
@@ -2348,11 +2348,9 @@ footer {
   60%,
   100% {
     opacity: 0.45;
-    transform: translateY(0);
   }
   30% {
     opacity: 1;
-    transform: translateY(-3px);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2465,6 +2463,10 @@ footer {
   padding: 22px 16px;
   background: var(--surface);
 }
+.filter {
+  border: 1px solid var(--border);
+}
+
 .history-heading {
   display: flex;
   align-items: center;
@@ -2640,9 +2642,18 @@ footer {
   padding-right: 5px;
 }
 
-/* Size the conversation to the viewport while keeping its composer visible. */
+/* Give the conversation and sources the same viewport allowance. */
+.study-assistant {
+  --assistant-panel-height: calc(100dvh - 160px);
+  --assistant-panel-max: 1100px;
+  --assistant-chat-min: 500px;
+}
 .study-assistant .chat-panel {
-  height: clamp(420px, calc(100dvh - 210px), 1100px);
+  height: clamp(
+    var(--assistant-chat-min),
+    var(--assistant-panel-height),
+    var(--assistant-panel-max)
+  );
   min-height: 0;
 }
 .study-assistant .chat-messages {
@@ -2651,19 +2662,14 @@ footer {
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-@media (max-width: 560px) {
-  .study-assistant .chat-panel {
-    height: clamp(360px, calc(100dvh - 200px), 900px);
-    min-height: 0;
-  }
-}
-
 .study-assistant .source-panel {
-  height: clamp(500px, calc(100dvh - 210px), 1100px);
+  height: clamp(500px, var(--assistant-panel-height), var(--assistant-panel-max));
 }
 @media (max-width: 560px) {
-  .study-assistant .source-panel {
-    height: clamp(500px, calc(100dvh - 200px), 900px);
+  .study-assistant {
+    --assistant-panel-height: calc(100dvh - 150px);
+    --assistant-panel-max: 900px;
+    --assistant-chat-min: 360px;
   }
 }
 
@@ -2909,4 +2915,446 @@ footer {
 .creation-modal .record-edit-form input {
   border: 1px solid var(--border);
   border-radius: 8px;
+}
+
+.documents-page .page-heading p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.documents-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 21rem);
+  gap: 24px;
+  align-items: start;
+}
+.documents-workspace > .panel {
+  padding: clamp(16px, 2vw, 24px);
+  border-color: var(--border);
+  border-radius: 12px;
+  margin: 0;
+}
+.documents-workspace h2 {
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+.collection-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+.collection-heading > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.documents-page .toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(8rem, 38%);
+  gap: 10px;
+  margin: 16px 0 4px;
+}
+.documents-page .search-field,
+.documents-page .toolbar select,
+.documents-page .upload-controls select {
+  min-height: 42px;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.documents-page .search-field input {
+  padding: 8px 0;
+}
+.documents-page :is(.search-field, .dropzone):focus-within {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+.documents-page .document-list {
+  padding: 0;
+  border: 0;
+}
+.documents-page .document-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: 10px;
+  padding: 13px 0;
+}
+.documents-page .document-row:last-of-type {
+  border-bottom: 0;
+}
+.documents-page .document-info strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+.documents-page .document-info:hover strong {
+  text-decoration: underline;
+}
+.documents-page .document-info small {
+  font-size: 12px;
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+}
+.documents-page .file-icon {
+  padding: 8px;
+}
+.documents-page .document-row .status {
+  display: inline-block;
+  border-radius: 999px;
+  font-size: 11px;
+  text-transform: capitalize;
+}
+.documents-page :is(.document-status-pending, .document-status-queued, .document-status-processing) {
+  color: var(--blue);
+}
+.documents-page .document-status-failed {
+  background: var(--error-surface);
+}
+.documents-page .document-row .icon-button {
+  border-radius: 8px;
+}
+.documents-page .document-row .icon-button:hover {
+  background: var(--error-surface);
+}
+.documents-page .upload-controls {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin: 16px 0;
+}
+.documents-page .dropzone {
+  gap: 8px;
+  padding: 20px 12px;
+  border-color: var(--border);
+}
+.documents-page .dropzone:not(.upload-disabled):hover {
+  border-color: var(--blue);
+}
+.documents-page .dropzone:not(.upload-disabled) strong {
+  color: var(--blue);
+}
+.documents-page .dropzone input::file-selector-button,
+.documents-page .upload-formula-choices .button:not(:disabled) {
+  background: var(--blue);
+  color: var(--on-blue);
+  border: 0;
+  border-radius: 8px;
+}
+.documents-page .dropzone input::file-selector-button {
+  padding: 8px 10px;
+  margin-inline-end: 8px;
+  cursor: pointer;
+}
+.documents-page .dropzone input:disabled::file-selector-button {
+  cursor: default;
+}
+.documents-page .upload-formula-choices .button {
+  margin-top: 12px;
+}
+@media (max-width: 1100px) {
+  .documents-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .documents-page .upload-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 480px) {
+  .documents-page :is(.toolbar, .upload-controls) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .documents-page .document-row {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    row-gap: 4px;
+  }
+  .documents-page .document-row .status {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start;
+    margin: 0;
+  }
+  .documents-page .document-row .icon-button {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+.overview-page .page-heading {
+  margin-bottom: 24px;
+}
+.overview-page .page-heading p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.overview-page .overview-courses > .section-heading {
+  margin: 0 0 14px;
+}
+.overview-page .section-heading h2 {
+  font-size: 18px;
+  font-weight: 650;
+}
+.overview-page .section-heading a,
+.overview-page .text-link {
+  font-size: 13px;
+}
+.overview-page :is(.section-heading a, .text-link):hover {
+  text-decoration: underline;
+}
+.overview-page .course-card {
+  border-radius: 12px;
+}
+.overview-page .course-card h3 {
+  font-size: 16px;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.overview-page .course-card p {
+  font-size: 12px;
+}
+.overview-page .course-card-bottom {
+  flex-wrap: wrap;
+  gap: 6px 12px;
+}
+.overview-page .stats-grid {
+  gap: 0;
+  margin: 24px 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.overview-page .stat {
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 12px 16px;
+  gap: 10px;
+}
+.overview-page .stat + .stat {
+  border-inline-start: 1px solid var(--border);
+}
+.overview-page .stat > span {
+  color: var(--muted);
+  padding: 8px;
+}
+.overview-page .stat strong {
+  font-size: 19px;
+  font-variant-numeric: tabular-nums;
+}
+.overview-page .stat p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 0;
+}
+.overview-page .hero-panel {
+  padding: clamp(18px, 2vw, 26px);
+  min-height: 240px;
+  border-radius: 12px;
+}
+.overview-page .hero-panel h2 {
+  font-size: clamp(21px, 2vw, 28px);
+  margin: 10px 0 8px;
+}
+.overview-page .hero-panel p,
+.overview-page .dashboard-bottom p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.overview-page .hero-panel .button {
+  margin-top: 14px;
+}
+.overview-page .hero-art {
+  transform: scale(.76);
+  transform-origin: top right;
+}
+.overview-page .dashboard-bottom {
+  margin-top: 24px;
+}
+.overview-page .dashboard-bottom .panel {
+  border-radius: 12px;
+}
+.overview-page .button {
+  min-height: 42px;
+  border-radius: 8px;
+}
+.overview-page :is(a, button):focus-visible {
+  outline: 2px solid var(--blue);
+}
+@media (max-width: 900px) {
+  .overview-page .stat:nth-child(odd) {
+    border-inline-start: 0;
+  }
+  .overview-page .stat:nth-child(n + 3) {
+    border-top: 1px solid var(--border);
+  }
+  .overview-page .hero-panel {
+    min-height: 0;
+  }
+}
+@media (max-width: 420px) {
+  .overview-page .stat {
+    padding: 10px;
+    gap: 6px;
+  }
+  .overview-page .stat > span {
+    padding: 5px;
+  }
+}
+.study-page .page-heading p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.study-page .button {
+  min-height: 42px;
+  border-radius: 8px;
+}
+.study-page :is(a, button, input, select, textarea):focus-visible,
+.auth-content :is(a, button, input):focus-visible,
+.route-message a:focus-visible {
+  outline: 2px solid var(--blue);
+}
+.study-page .panel,
+.study-page .course-card,
+.study-page .fc-deck {
+  border-radius: 12px;
+}
+.study-page .search-field {
+  border-radius: 8px;
+  min-height: 44px;
+}
+.study-page .search-field input {
+  padding-block: 8px;
+}
+.study-page .search-field:focus-within {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+.courses-page .course-card h3,
+.course-page .notebook h3,
+.fc-page .fc-deck h3 {
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.courses-page .course-card p,
+.course-page .notebook p {
+  color: var(--muted);
+  font-size: 12px;
+}
+.courses-page .course-card-bottom {
+  flex-wrap: wrap;
+}
+.course-page .notebook-create-action {
+  justify-content: flex-start;
+}
+.course-page .document-list {
+  margin-block: 16px;
+}
+.document-page .reader {
+  max-width: none;
+  padding: clamp(18px, 3vw, 32px);
+}
+.document-page .reader > h2 {
+  overflow-wrap: anywhere;
+}
+.document-page .reader > .inline-actions {
+  margin-top: 18px;
+}
+.document-page .document-preview {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+.document-page .document-preview h3 {
+  font-size: 16px;
+  font-weight: 650;
+}
+.fc-page .toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(9rem, 15rem);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.fc-page .toolbar .search-field {
+  max-width: none;
+  margin: 0;
+}
+.fc-page .toolbar select {
+  min-height: 44px;
+  width: 100%;
+}
+.fc-deck-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tests-library .collection-heading {
+  margin-bottom: 8px;
+}
+.tests-library .document-info strong {
+  font-size: 14px;
+}
+.tests-library .document-info small {
+  font-size: 12px;
+}
+.tests-library .test-open:hover strong {
+  text-decoration: underline;
+}
+.settings-page .settings-panel {
+  max-width: 720px;
+}
+.settings-page .settings-panel h2 {
+  margin-bottom: 16px;
+  font-weight: 650;
+}
+.settings-page .settings-panel form {
+  gap: 16px;
+}
+.settings-page .settings-panel form .button {
+  align-self: flex-start;
+}
+.settings-page .settings-panel input,
+.auth-content input:not([type="hidden"]) {
+  min-height: 44px;
+  border-color: var(--border);
+}
+.settings-page .settings-panel .notice {
+  max-width: 52ch;
+}
+.study-assistant .chat-composer:focus-within {
+  border-color: var(--blue);
+}
+.timer-page .timer-clock-content {
+  font-variant-numeric: tabular-nums;
+}
+.auth-form-wrap .auth-switch a:hover,
+.study-page .text-link:hover {
+  text-decoration: underline;
+}
+.route-message {
+  width: min(100% - 32px, 640px);
+  min-height: 240px;
+  margin: 32px auto;
+  padding: clamp(24px, 5vw, 48px);
+  justify-content: center;
+  gap: 16px;
+}
+.route-message h1 {
+  color: var(--text);
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 650;
+}
+.route-message p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.route-message .eyebrow {
+  margin-bottom: 0;
+}
+@media (max-width: 480px) {
+  .fc-page .toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

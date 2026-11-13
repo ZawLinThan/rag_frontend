@@ -7,13 +7,13 @@ const CallbackPage = () => {
   const callbackError = params.get("error_description");
   if (loading)
     return (
-      <div className="completion" role="status">
-        Completing secure sign-in…
+      <div className="panel completion route-message" role="status">
+        <h1>Completing secure sign-in…</h1>
       </div>
     );
   if (session) return <Navigate to="/" replace />;
   return (
-    <div className="completion">
+    <div className="panel completion route-message">
       <h1>Sign-in couldn’t be completed.</h1>
       <p>
         {callbackError ||

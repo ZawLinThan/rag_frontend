@@ -6,15 +6,18 @@ import { deleteDocument } from "../lib/studyApi";
 import { formatFileSize } from "../lib/utils";
 import type { Course, Document, NoteBook } from "../types";
 import Modal from "./Modal";
+import { RecordRow } from "./StudySurfaces";
 
 const DocumentList = ({
   documents,
   courses,
   notebooks,
+  emptyMessage = "No documents here yet. Upload notes to a notebook to get started.",
 }: {
   documents: Document[];
   courses: Course[];
   notebooks: NoteBook[];
+  emptyMessage?: string;
 }) => {
   const remove = useStudyMutation(deleteDocument);
   const [target, setTarget] = useState<Pick<Document, "id" | "name"> | null>(
@@ -27,48 +30,50 @@ const DocumentList = ({
   };
 
   return (
-    <section className="panel">
+    <div className="panel document-list">
       <div role="status">
         {deletedName && <p className="notice">Deleted “{deletedName}”.</p>}
       </div>
       {documents.map((document) => (
-        <div className="document-row" key={document.id}>
-          <span className="file-icon">
-            <FileText size={20} />
-          </span>
-          <Link className="document-info" to={`/documents/${document.id}`}>
-            <strong>{document.name}</strong>
-            <small>
-              {courses.find((course) => course.id === document.courseId)
-                ?.name ?? "Unassigned course"}{" "}
-              ·{" "}
-              {notebooks.find((notebook) => notebook.id === document.notebookId)
-                ?.noteBookName ?? "Unassigned notebook"}{" "}
-              · {formatFileSize(document.fileSize)}
-            </small>
-          </Link>
-          <span className={`status document-status-${document.status}`}>
-            {document.status}
-          </span>
-          <button
-            type="button"
-            className="icon-button"
-            aria-label={`Delete ${document.name}`}
-            onClick={() => {
-              remove.reset();
-              setDeletedName("");
-              setTarget({ id: document.id, name: document.name });
-            }}
-          >
-            <Trash2 size={17} />
-          </button>
-        </div>
+        <RecordRow
+          key={document.id}
+          icon={<FileText size={20} />}
+          info={
+            <Link className="document-info" to={`/documents/${document.id}`}>
+              <strong>{document.name}</strong>
+              <small>
+                {courses.find((course) => course.id === document.courseId)
+                  ?.name ?? "Unassigned course"}{" "}
+                ·{" "}
+                {notebooks.find(
+                  (notebook) => notebook.id === document.notebookId,
+                )?.noteBookName ?? "Unassigned notebook"}{" "}
+                · {formatFileSize(document.fileSize)}
+              </small>
+            </Link>
+          }
+          status={
+            <span className={`status document-status-${document.status}`}>
+              {document.status}
+            </span>
+          }
+          action={
+            <button
+              type="button"
+              className="icon-button"
+              aria-label={`Delete ${document.name}`}
+              onClick={() => {
+                remove.reset();
+                setDeletedName("");
+                setTarget({ id: document.id, name: document.name });
+              }}
+            >
+              <Trash2 size={17} />
+            </button>
+          }
+        />
       ))}
-      {!documents.length && (
-        <p className="empty">
-          No documents here yet. Upload notes to a notebook to get started.
-        </p>
-      )}
+      {!documents.length && <p className="empty">{emptyMessage}</p>}
       {target && (
         <Modal title="Delete document" busy={remove.isPending} onClose={close}>
           <form
@@ -113,7 +118,7 @@ const DocumentList = ({
           </form>
         </Modal>
       )}
-    </section>
+    </div>
   );
 };
 
