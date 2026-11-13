@@ -1,3 +1,4 @@
+import { CollectionHeading, RecordRow } from "../components/StudySurfaces";
 import { TestsContentSkeleton } from "../skeletons";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -50,7 +51,7 @@ const TestsPage = () => {
     (notebook) => notebook.id === notebookId && notebook.courseId === courseId,
   );
   return (
-    <>
+    <div className="tests-page study-page">
       <PageHeading
         title="Tests"
         description="Practice with a test from your notebook or use a sample test as a reference."
@@ -94,11 +95,8 @@ const TestsPage = () => {
                     mode === "reference"
                       ? (reference?.document.id ?? null)
                       : null,
-                  referenceUrl:
-                    /** redesign, publicUrl is/will be deleted*/
-                    mode === "reference"
-                      ? (reference?.publicUrl ?? null)
-                      : null,
+                  referenceUrl: null,
+                  /** redesign, publicUrl is/will be deleted*/
                 },
                 {
                   onSuccess: (test) => {
@@ -235,39 +233,46 @@ const TestsPage = () => {
       ) : (
         !tests.isPending &&
         !tests.error && (
-          <section className="panel">
-            <div className="section-heading">
-              <h2>Your tests</h2>
-              <span>{tests.data?.length ?? 0} tests</span>
-            </div>
+          <section
+            className="panel tests-library"
+            aria-labelledby="tests-library-heading"
+          >
+            <CollectionHeading
+              id="tests-library-heading"
+              title="Your tests"
+              aside={<span>{tests.data?.length ?? 0} tests</span>}
+            />
             {tests.data?.map((test) => (
-              <div className="document-row" key={test.id}>
-                <span className="file-icon">
-                  <FileText size={20} />
-                </span>
-                <button
-                  className="document-info test-open"
-                  onClick={() => setSelectedId(test.id)}
-                >
-                  <strong>{test.title ?? "Untitled test"}</strong>
-                  <small>
-                    {test.referenceFileId
-                      ? "Based on a sample test"
-                      : "Generated practice"}{" "}
-                    · {new Date(test.createdAt).toLocaleDateString()}
-                  </small>
-                </button>
-                <button
-                  className="icon-button"
-                  aria-label={`Delete ${test.title ?? "test"}`}
-                  onClick={() => {
-                    remove.reset();
-                    setConfirm(test.id);
-                  }}
-                >
-                  <Trash2 size={17} />
-                </button>
-              </div>
+              <RecordRow
+                key={test.id}
+                icon={<FileText size={20} />}
+                info={
+                  <button
+                    className="document-info test-open"
+                    onClick={() => setSelectedId(test.id)}
+                  >
+                    <strong>{test.title ?? "Untitled test"}</strong>
+                    <small>
+                      {test.referenceFileId
+                        ? "Based on a sample test"
+                        : "Generated practice"}{" "}
+                      · {new Date(test.createdAt).toLocaleDateString()}
+                    </small>
+                  </button>
+                }
+                action={
+                  <button
+                    className="icon-button"
+                    aria-label={`Delete ${test.title ?? "test"}`}
+                    onClick={() => {
+                      remove.reset();
+                      setConfirm(test.id);
+                    }}
+                  >
+                    <Trash2 size={17} />
+                  </button>
+                }
+              />
             ))}
             {!tests.data?.length && (
               <p className="empty">
@@ -304,7 +309,7 @@ const TestsPage = () => {
           </section>
         )
       )}
-    </>
+    </div>
   );
 };
 

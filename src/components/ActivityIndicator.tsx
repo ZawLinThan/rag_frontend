@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Music2 } from "lucide-react";
 import { useTimer } from "../hooks/useTimer";
 import { formatTimer } from "../lib/timer";
 import type { Playback } from "../lib/spotify/client";
@@ -18,17 +19,28 @@ function SpotifyIcon() {
 }
 export default function ActivityIndicator({
   playback,
+  musicProvider,
   spotifyLoaded,
   openSpotify,
 }: {
   playback: Playback | null;
+  musicProvider: "spotify" | "youtube" | "apple";
   spotifyLoaded: boolean;
   openSpotify: () => void;
 }) {
   const { timer, remainingMs, setFloatingHidden } = useTimer();
   const [open, setOpen] = useState(false);
   const timerActive = timer.status !== "idle";
-  const spotifyActive = Boolean(playback?.item || spotifyLoaded);
+  const spotifyActive = Boolean(
+    (musicProvider === "spotify" && playback?.item) || spotifyLoaded,
+  );
+  const musicName = {
+    spotify: "Spotify",
+    youtube: "YouTube Music",
+    apple: "Apple Music",
+  }[musicProvider];
+  const icon =
+    musicProvider === "spotify" ? <SpotifyIcon /> : <Music2 size={21} />;
   if (!timerActive && !spotifyActive) return null;
   const fraction = timer.durationMs
     ? Math.max(0, Math.min(1, remainingMs / timer.durationMs))
@@ -67,12 +79,10 @@ export default function ActivityIndicator({
             <span>{Math.ceil(remainingMs / 60000)}</span>
           </span>
         ) : (
-          <SpotifyIcon />
+          icon
         )}
         {timerActive && spotifyActive && (
-          <span className="activity-spotify-dot">
-            <SpotifyIcon />
-          </span>
+          <span className="activity-spotify-dot">{icon}</span>
         )}
       </button>
       {open && (
@@ -106,11 +116,11 @@ export default function ActivityIndicator({
               }}
             >
               <span className="activity-menu-symbol spotify-symbol">
-                <SpotifyIcon />
+                {icon}
               </span>
               <span>
-                <strong>Spotify</strong>
-                <small>{playback?.item?.name || "Spotify player"}</small>
+                <strong>{musicName}</strong>
+                <small>{playback?.item?.name || `${musicName} player`}</small>
               </span>
             </button>
           )}

@@ -1,4 +1,24 @@
 import {
+  ArrowLeft,
+  ArrowRight,
+  FileText,
+  FolderOpen,
+  GripVertical,
+  Plus,
+  Sparkles,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import WorkspaceSidebar from "../components/WorkspaceSidebar";
+import {
+  CollectionHeading,
+  DocumentsWorkspace,
+} from "../components/StudySurfaces";
+import {
+  OverviewHero,
+  OverviewPracticePanels,
+  OverviewTotals,
+} from "../components/OverviewSections";
+import {
   WorkspaceHeadingSkeleton,
   TimerMainSkeleton,
   SpotifyPanelSkeleton,
@@ -8,157 +28,211 @@ import {
 import {
   CardGridSkeleton,
   CourseGridSkeleton,
-  FormSkeleton,
+  DocumentListSkeleton,
+  DocumentPreviewSkeleton,
   HeadingSkeleton,
-  ListSkeleton,
-  LinesSkeleton,
+  RecordActionsSkeleton,
+  RowSkeleton,
   ScopeSkeleton,
   SearchSkeleton,
-  Skeleton,
   SkeletonRegion,
+  SkeletonText,
   ToolbarSkeleton,
   UploadSkeleton,
 } from "./components";
 
-const SectionHeading = () => (
-  <div className="section-heading">
-    <Skeleton className="sk-section-title" />
-    <Skeleton className="sk-meta" />
-  </div>
-);
 export const CoursesContentSkeleton = () => (
   <>
-    <SearchSkeleton />
+    <SearchSkeleton placeholder="Search your courses…" />
     <CourseGridSkeleton count={6} />
   </>
 );
 export const DocumentsContentSkeleton = () => (
-  <>
-    <section className="panel upload-panel">
-      <ScopeSkeleton />
-      <UploadSkeleton />
-    </section>
-    <ToolbarSkeleton />
-    <ListSkeleton />
-  </>
+  <DocumentsWorkspace
+    count={
+      <span>
+        <SkeletonText>4 documents</SkeletonText>
+      </span>
+    }
+    toolbar={<ToolbarSkeleton placeholder="Search documents…" />}
+    documents={<DocumentListSkeleton />}
+    upload={
+      <>
+        <ScopeSkeleton />
+        <UploadSkeleton />
+      </>
+    }
+  />
 );
 export const FlashcardsContentSkeleton = () => (
   <>
-    <ToolbarSkeleton />
+    <ToolbarSkeleton placeholder="Search your decks…" />
     <CardGridSkeleton count={6} />
   </>
 );
 export const TestsContentSkeleton = () => (
-  <section className="panel">
-    <SectionHeading />
-    {[0, 1, 2, 3].map((i) => (
-      <div className="document-row" key={i}>
-        <Skeleton className="sk-file-icon" />
-        <div className="document-info sk-row-copy">
-          <Skeleton className="sk-row-title" />
-          <Skeleton className="sk-row-meta" />
-        </div>
-        <Skeleton className="sk-action-icon" />
-      </div>
+  <section className="panel tests-library">
+    <CollectionHeading
+      title="Your tests"
+      aside={
+        <span>
+          <SkeletonText>4 tests</SkeletonText>
+        </span>
+      }
+    />
+    {[1, 2, 3, 4].map((i) => (
+      <RowSkeleton status={false} key={i} />
     ))}
   </section>
 );
-export const OverviewPageSkeleton = () => (
-  <>
-    <HeadingSkeleton />
-    <section className="hero-panel">
-      <div className="sk-hero-copy">
-        <Skeleton className="sk-label" />
-        <Skeleton className="sk-hero-title" />
-        <Skeleton className="sk-hero-title sk-medium" />
-        <Skeleton className="sk-hero-description" />
-        <Skeleton className="sk-button" />
-      </div>
-      <div className="hero-art">
-        <Skeleton className="sk-hero-art" />
-      </div>
-    </section>
-    <div className="stats-grid">
-      {[0, 1, 2, 3].map((i) => (
-        <div className="stat" key={i}>
-          <Skeleton className="sk-icon" />
-          <div className="sk-stat-copy">
-            <Skeleton className="sk-stat-value" />
-            <Skeleton className="sk-meta" />
-          </div>
-        </div>
-      ))}
+export const OverviewCoursesSkeleton = () => (
+  <section className="overview-courses">
+    <div className="section-heading">
+      <h2>
+        Your courses{" "}
+        <span>
+          <SkeletonText>4</SkeletonText>
+        </span>
+      </h2>
+      <Link to="/courses">
+        View all courses <ArrowRight size={16} />
+      </Link>
     </div>
-    <SectionHeading />
     <CourseGridSkeleton />
-    <div className="dashboard-bottom">
-      {[0, 1].map((i) => (
-        <section className="panel" key={i}>
-          <LinesSkeleton />
-          <div className="sk-panel-action">
-            <Skeleton className="sk-button" />
-          </div>
-        </section>
-      ))}
-    </div>
-  </>
+  </section>
 );
-export const CoursesPageSkeleton = () => (
-  <>
-    <HeadingSkeleton />
+const OverviewPageSkeleton = () => (
+  <div className="overview-page">
+    <HeadingSkeleton
+      dynamic
+      title="Welcome back, Student!"
+      description="Pick up where you left off, or discover something new."
+      action="Upload notes"
+      icon={<Plus size={17} />}
+    />
+    <OverviewHero />
+    <OverviewTotals loading />
+    <OverviewCoursesSkeleton />
+    <OverviewPracticePanels />
+  </div>
+);
+const CoursesPageSkeleton = () => (
+  <div className="courses-page study-page">
+    <HeadingSkeleton
+      title="My courses"
+      description="Organize each course into notebooks, then bring your notes to life."
+      action="New course"
+      icon={<Plus size={17} />}
+    />
     <CoursesContentSkeleton />
-  </>
+  </div>
 );
 export const CoursePageSkeleton = () => (
-  <>
-    <Skeleton className="sk-back" />
-    <HeadingSkeleton />
+  <div className="course-page study-page">
+    <Link className="back-link" to="/courses">
+      <ArrowLeft size={16} /> My courses
+    </Link>
+    <HeadingSkeleton
+      dynamic
+      title="Introduction to the course"
+      description="COURSE 101 · Current semester"
+      action="Ask this course"
+      icon={<Sparkles size={17} />}
+    />
     <div className="notebook-create-action">
-      <Skeleton className="sk-button" />
+      <button className="button" type="button">
+        <Plus size={16} /> New notebook
+      </button>
     </div>
     <div className="notebook-grid">
-      {[0, 1, 2].map((i) => (
-        <div className="panel notebook sk-notebook" key={i}>
-          <Skeleton className="sk-notebook-icon" />
-          <Skeleton className="sk-card-title" />
-          <Skeleton className="sk-meta" />
+      {[1, 2, 3].map((i) => (
+        <div className="notebook-tile" key={i}>
+          <button
+            className={`panel notebook${i === 1 ? " selected" : ""}`}
+            type="button"
+          >
+            <FolderOpen size={25} />
+            <h3>
+              <SkeletonText>Lecture notes</SkeletonText>
+            </h3>
+            <p>
+              <SkeletonText>2 documents</SkeletonText>
+            </p>
+          </button>
+          <div className="notebook-tile-actions">
+            <button type="button" className="card-drag-handle">
+              <GripVertical size={16} />
+            </button>
+            <RecordActionsSkeleton />
+          </div>
         </div>
       ))}
     </div>
-    <SectionHeading />
+    <div className="section-heading">
+      <h2>
+        <SkeletonText>Lecture notes</SkeletonText>
+      </h2>
+      <div className="inline-actions">
+        <span className="text-link">Create a test</span>
+        <span className="text-link">Create flashcards</span>
+      </div>
+    </div>
     <UploadSkeleton />
-    <ListSkeleton />
-    <Skeleton className="sk-button" />
-  </>
+    <DocumentListSkeleton />
+    <button type="button" className="button">
+      Ask this notebook <Sparkles size={16} />
+    </button>
+  </div>
 );
-export const DocumentsPageSkeleton = () => (
-  <>
-    <HeadingSkeleton action={false} />
+const DocumentsPageSkeleton = () => (
+  <div className="documents-page">
+    <HeadingSkeleton
+      title="My documents"
+      description="Store your lecture notes, readings, and sample tests in course notebooks."
+    />
     <DocumentsContentSkeleton />
-  </>
+  </div>
 );
 export const DocumentPageSkeleton = () => (
-  <>
-    <Skeleton className="sk-back" />
-    <HeadingSkeleton action={false} />
-    <section className="panel reader sk-reader">
-      <Skeleton className="sk-label" />
-      <Skeleton className="sk-section-title" />
-      <Skeleton className="sk-meta" />
-      <Skeleton className="sk-meta" />
-      <div className="document-preview">
-        <Skeleton className="sk-card-title" />
-        <div className="document-preview-pdf sk-preview" />
-      </div>
+  <div className="document-page study-page">
+    <Link className="back-link" to="/documents">
+      <ArrowLeft size={16} /> My documents
+    </Link>
+    <HeadingSkeleton
+      dynamic
+      title="Lecture notes and readings.pdf"
+      description="Course / Notebook"
+    />
+    <section className="panel reader">
+      <span className="eyebrow">
+        <FileText size={16} /> DOCUMENT DETAILS
+      </span>
+      <h2>
+        <SkeletonText>Lecture notes and readings.pdf</SkeletonText>
+      </h2>
+      <p>
+        <SkeletonText>2 MB · PDF · Ready</SkeletonText>
+      </p>
+      <p>
+        <SkeletonText>Added 11/12/2026</SkeletonText>
+      </p>
       <div className="inline-actions">
-        <Skeleton className="sk-button" />
-        <Skeleton className="sk-button" />
+        <button className="button" type="button">
+          Rename document
+        </button>
+        <button className="button primary" type="button">
+          <Sparkles size={16} /> Ask this file
+        </button>
       </div>
+      <section className="document-preview">
+        <h3>Preview</h3>
+        <DocumentPreviewSkeleton />
+      </section>
     </section>
-  </>
+  </div>
 );
 export const ChatPageSkeleton = () => (
-  <div className="study-assistant sk-workspace" inert aria-hidden="true">
+  <div className="study-assistant study-page sk-workspace">
     <WorkspaceHeadingSkeleton />
     <div className="chat-history-layout">
       <div className="chat-layout">
@@ -168,27 +242,67 @@ export const ChatPageSkeleton = () => (
     </div>
   </div>
 );
-export const FlashcardsPageSkeleton = () => (
-  <>
-    <HeadingSkeleton />
+const FlashcardsPageSkeleton = () => (
+  <div className="fc-page study-page">
+    <HeadingSkeleton
+      title="Flashcards"
+      description="Create your own cards or turn your notes into a practice deck."
+      action="Create deck"
+    />
     <FlashcardsContentSkeleton />
-  </>
+  </div>
 );
-export const TestsPageSkeleton = () => (
-  <>
-    <HeadingSkeleton />
+const TestsPageSkeleton = () => (
+  <div className="tests-page study-page">
+    <HeadingSkeleton
+      title="Tests"
+      description="Practice with a test from your notebook or use a sample test as a reference."
+      action="Create test"
+    />
     <TestsContentSkeleton />
-  </>
+  </div>
 );
-export const SettingsPageSkeleton = () => (
-  <>
-    <HeadingSkeleton action={false} />
-    <FormSkeleton />
-    <FormSkeleton fields={1} />
-  </>
+const SettingsPageSkeleton = () => (
+  <div className="settings-page study-page">
+    <HeadingSkeleton
+      title="Settings"
+      description="A study space that works for you."
+    />
+    <section className="panel settings-panel">
+      <h2>Study preferences</h2>
+      <form>
+        <label>
+          Display name
+          <input className="sk-control" readOnly />
+        </label>
+        <label>
+          Daily study goal (minutes)
+          <input
+            className="sk-control"
+            type="number"
+            min="5"
+            max="120"
+            value="20"
+            readOnly
+          />
+        </label>
+        <button type="button" className="button primary">
+          Save preferences
+        </button>
+      </form>
+    </section>
+    <section className="panel settings-panel">
+      <h2>Account &amp; workspace</h2>
+      <div className="inline-actions">
+        <button type="button" className="button">
+          Sign out
+        </button>
+      </div>
+    </section>
+  </div>
 );
-export const TimerPageSkeleton = () => (
-  <div className="timer-page sk-workspace" inert aria-hidden="true">
+const TimerPageSkeleton = () => (
+  <div className="timer-page study-page sk-workspace">
     <WorkspaceHeadingSkeleton timer />
     <div className="timer-music-layout">
       <TimerMainSkeleton />
@@ -196,88 +310,56 @@ export const TimerPageSkeleton = () => (
     </div>
   </div>
 );
-export const AuthPageSkeleton = () => (
-  <div className="skeleton-auth">
-    <FormSkeleton />
-    <FormSkeleton />
-  </div>
-);
-export const CallbackPageSkeleton = () => (
-  <section className="panel">
-    <LinesSkeleton count={2} />
-  </section>
-);
-export const NotFoundPageSkeleton = CallbackPageSkeleton;
-export const QuizzesPageSkeleton = TestsPageSkeleton;
-export const PageSkeleton = ({ pathname }: { pathname: string }) => {
-  const parts = pathname.split("/").filter(Boolean);
+
+export function LayoutPageSkeleton({ pathname }: { pathname: string }) {
+  const [page, detail] = pathname.split("/").filter(Boolean);
   const content =
-    parts[0] === "courses" ? (
-      parts[1] ? (
+    page === "courses" ? (
+      detail ? (
         <CoursePageSkeleton />
       ) : (
         <CoursesPageSkeleton />
       )
-    ) : parts[0] === "documents" ? (
-      parts[1] ? (
+    ) : page === "documents" ? (
+      detail ? (
         <DocumentPageSkeleton />
       ) : (
         <DocumentsPageSkeleton />
       )
-    ) : parts[0] === "chat" ? (
+    ) : page === "chat" ? (
       <ChatPageSkeleton />
-    ) : parts[0] === "flashcards" ? (
-      <FlashcardsPageSkeleton />
-    ) : parts[0] === "tests" ? (
-      <TestsPageSkeleton />
-    ) : parts[0] === "quizzes" ? (
-      <QuizzesPageSkeleton />
-    ) : parts[0] === "settings" ? (
-      <SettingsPageSkeleton />
-    ) : parts[0] === "timer" ? (
+    ) : page === "timer" ? (
       <TimerPageSkeleton />
-    ) : !parts[0] ? (
+    ) : page === "flashcards" ? (
+      <FlashcardsPageSkeleton />
+    ) : page === "tests" || page === "quizzes" ? (
+      <TestsPageSkeleton />
+    ) : page === "settings" ? (
+      <SettingsPageSkeleton />
+    ) : !page ? (
       <OverviewPageSkeleton />
     ) : (
-      <NotFoundPageSkeleton />
+      <div className="panel completion route-message">
+        <span className="eyebrow">404</span>
+        <h1>This page took a study break.</h1>
+        <p>Let’s get you back to your workspace.</p>
+        <Link className="button primary" to="/">
+          Back to overview
+        </Link>
+      </div>
     );
   return (
-    <SkeletonRegion label="Loading your study workspace">
-      {content}
-    </SkeletonRegion>
-  );
-};
-export const LayoutPageSkeleton = ({ pathname }: { pathname: string }) => (
-  <div className="app-layout skeleton-layout">
-    <aside className="sidebar">
-      <Skeleton className="sk-brand" />
-      <div className="workspace-label">
-        <Skeleton className="sk-label" />
+    <div className="app-layout">
+      <div inert aria-hidden="true" className="workspace-sidebar-loading">
+        <WorkspaceSidebar loading />
       </div>
-      <nav>
-        {Array.from({ length: 7 }, (_, i) => (
-          <div className="nav-item" key={i}>
-            <Skeleton className="sk-nav-icon" />
-            <Skeleton className="sk-nav-text" />
-          </div>
-        ))}
-      </nav>
-      <div className="nav-item">
-        <Skeleton className="sk-nav-icon" />
-        <Skeleton className="sk-nav-text" />
+      <div className="main-shell">
+        <main className={page === "timer" ? "timer-workspace" : undefined}>
+          <SkeletonRegion label="Loading your study workspace">
+            {content}
+          </SkeletonRegion>
+        </main>
       </div>
-      <div className="profile">
-        <Skeleton className="sk-avatar" />
-        <div className="sk-row-copy">
-          <Skeleton className="sk-row-title" />
-          <Skeleton className="sk-row-meta" />
-        </div>
-      </div>
-    </aside>
-    <div className="main-shell">
-      <main>
-        <PageSkeleton pathname={pathname} />
-      </main>
     </div>
-  </div>
-);
+  );
+}

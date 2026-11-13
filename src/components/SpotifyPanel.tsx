@@ -13,11 +13,13 @@ export default function SpotifyPanel({
   onContentChange,
   floatingOpen,
   closeFloating,
+  selector,
 }: {
   onContentChange: (loaded: boolean) => void;
   onPlayback: (playback: Playback | null) => void;
   floatingOpen: boolean;
   closeFloating: () => void;
+  selector: React.ReactNode;
 }) {
   const floating = useLocation().pathname !== "/timer";
   const connected = useSyncExternalStore(spotify.subscribe, spotify.connected);
@@ -89,7 +91,9 @@ export default function SpotifyPanel({
         }
       >
         {floating && floatingOpen && (item || embed) && (
-          <div className={`spotify-floating-controls ${embed ? "has-embed" : ""}`}>
+          <div
+            className={`spotify-floating-controls ${embed ? "has-embed" : ""}`}
+          >
             {item && (
               <div className="spotify-current-copy">
                 <span className="timer-eyebrow">
@@ -121,6 +125,7 @@ export default function SpotifyPanel({
             </button>
           </div>
         )}
+        {selector}
         <div className="spotify-heading">
           <div>
             <span className="timer-eyebrow">A SOUNDTRACK FOR YOUR SESSION</span>

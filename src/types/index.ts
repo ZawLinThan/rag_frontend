@@ -26,6 +26,7 @@ export type Document = {
   r2Key: string;
   fileType: string;
   fileSize: number;
+  hasMathFormula: boolean;
   status: "pending" | "queued" | "processing" | "ready" | "failed";
   errorMessage: string | null;
   courseId: string | null;
@@ -115,5 +116,10 @@ export type TestContent = {
   questions: TestQuestion[];
 };
 
-export type UploadInput = { file: File; courseId: string; notebookId: string };
+export type UploadInput = {
+  file: File;
+  courseId: string;
+  notebookId: string;
+  hasMathFormula: boolean;
+};
 export type UploadResult = { document: Document };

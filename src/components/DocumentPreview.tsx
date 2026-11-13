@@ -71,6 +71,19 @@ async function docxText(blob: Blob): Promise<string> {
 }
 
 export default function DocumentPreview({ document }: { document: Document }) {
+  return (
+    <DocumentFilePreview
+      key={JSON.stringify([
+        document.id,
+        document.originalName,
+        document.fileType,
+      ])}
+      document={document}
+    />
+  );
+}
+
+function DocumentFilePreview({ document }: { document: Document }) {
   const [state, setState] = useState<{
     url?: string;
     text?: string;
@@ -80,7 +93,6 @@ export default function DocumentPreview({ document }: { document: Document }) {
   useEffect(() => {
     let cancelled = false;
     let url: string | undefined;
-    setState({ loading: true });
     void (async () => {
       try {
         const file = await getDocumentFile(document.id);
@@ -126,10 +138,13 @@ export default function DocumentPreview({ document }: { document: Document }) {
     };
   }, [document.id, document.originalName, document.fileType]);
 
+  const textPreview =
+    /\.(txt|docx)$/i.test(document.originalName) ||
+    /^(txt|docx|text\/plain)$|wordprocessingml/i.test(document.fileType);
   return (
     <section className="document-preview" aria-label="Document preview">
       <h3>Preview</h3>
-      {state.loading && <DocumentPreviewSkeleton />}
+      {state.loading && <DocumentPreviewSkeleton text={textPreview} />}
       {state.error && (
         <p className="notice" role="status">
           {state.error}

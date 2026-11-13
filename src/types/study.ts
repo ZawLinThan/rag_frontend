@@ -5,7 +5,12 @@ import type { Course } from ".";
 export type WorkspaceContextType = WorkspaceType & {
   addNotebook: (courseId: string, name: string) => void;
   addCourse: (name: string) => void;
-  addDocument: (file: File, courseId: string, notebook: string) => void;
+  addDocument: (
+    file: File,
+    courseId: string,
+    notebook: string,
+    hasMathFormula: boolean,
+  ) => void;
   removeDocument: (id: string) => void;
 };
 

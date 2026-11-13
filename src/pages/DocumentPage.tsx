@@ -36,7 +36,7 @@ const DocumentPage = () => {
   const document = query.data;
   if (!document) return <p className="empty">Document not found.</p>;
   return (
-    <>
+    <div className="document-page study-page">
       <Link className="back-link" to="/documents">
         <ArrowLeft size={16} /> My documents
       </Link>
@@ -59,7 +59,6 @@ const DocumentPage = () => {
           </p>
         )}
         <p>Added {new Date(document.createdAt).toLocaleDateString()}</p>
-        <DocumentPreview document={document} />
         <div className="inline-actions">
           <button
             className="button"
@@ -80,6 +79,7 @@ const DocumentPage = () => {
             </Link>
           )}
         </div>
+        <DocumentPreview document={document} />
         {editing && (
           <form
             className="inline-form"
@@ -122,7 +122,7 @@ const DocumentPage = () => {
           </form>
         )}
       </section>
-    </>
+    </div>
   );
 };
 

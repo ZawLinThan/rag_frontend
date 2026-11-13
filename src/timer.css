@@ -52,17 +52,17 @@
   font-weight: 700;
   color: var(--muted);
 }
-.timer-state span {
+.timer-state > span:first-child {
   height: 7px;
   width: 7px;
   border-radius: 50%;
   background: #a5adb8;
 }
-.timer-state.running span {
+.timer-state.running > span:first-child {
   background: #4b9b75;
   box-shadow: 0 0 0 3px rgba(75, 155, 117, 0.12);
 }
-.timer-state.completed span {
+.timer-state.completed > span:first-child {
   background: var(--blue);
 }
 .timer-clock-wrap {
@@ -355,6 +355,7 @@
   align-items: center;
 }
 .spotify-link-form input {
+  border: 1px solid var(--border);
   min-width: 0;
   width: 100%;
   font-size: 12px;
@@ -484,11 +485,13 @@
   gap: 0 20px;
   align-items: stretch;
 }
-.timer-workspace > .timer-page,
+.timer-workspace > .skeleton-region,
+.timer-workspace > .skeleton-region > [inert],
+.timer-workspace .timer-page,
 .timer-workspace .timer-music-layout {
   display: contents;
 }
-.timer-workspace > .timer-page > .page-heading {
+.timer-workspace .timer-page > .page-heading {
   grid-column: 1 / -1;
 }
 .spotify-floating-header {
@@ -554,7 +557,7 @@
     grid-template-columns: minmax(0, 1fr);
     gap: 20px;
   }
-  .timer-workspace > .timer-page > .page-heading {
+  .timer-workspace .timer-page > .page-heading {
     margin-bottom: 10px;
   }
 }
@@ -594,3 +597,8 @@
 .spotify-floating-controls .floating-timer-close { flex: none; margin-left: auto; background: var(--surface); color: var(--text); }
 .spotify-floating .spotify-embed iframe { height: min(352px, max(80px, calc(100dvh - 220px))); }
 .spotify-floating { max-height: calc(100dvh - 110px); overflow-y: auto; }
+
+.music-provider-selector { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+.music-provider-selector button { display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 9px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; }
+.music-provider-selector button.selected { color: var(--text); background: var(--timer-soft); border-color: var(--blue); }
+.music-provider-selector svg, .spotify-heading h2 > svg { width: 21px; height: 21px; flex: none; }

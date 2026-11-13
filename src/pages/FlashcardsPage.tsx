@@ -1,4 +1,9 @@
-import { FlashcardsContentSkeleton, Skeleton } from "../skeletons";
+import { DeckSurface, SearchField } from "../components/StudySurfaces";
+import {
+  FlashcardsContentSkeleton,
+  FlashcardListSkeleton,
+  SkeletonText,
+} from "../skeletons";
 import { useCardOrderStore } from "../stores/cardOrderStore";
 import { SortableCards, SortableCard } from "../components/SortableCards";
 import { useState } from "react";
@@ -11,7 +16,6 @@ import {
   Layers,
   Pencil,
   Plus,
-  Search,
   Sparkles,
   Trash2,
 } from "lucide-react";
@@ -46,42 +50,45 @@ const DeckTile = ({
 }) => {
   const query = useQuery(studyQueries.cards(deck.id));
   return (
-    <article className="fc-deck">
-      <div className="fc-row">
-        <span className="fc-icon">
-          <Layers size={22} />
-        </span>
-        <span className="fc-label">
-          {query.isPending ? (
-            <Skeleton className="sk-line" />
-          ) : (
-            `${query.data?.length ?? 0} cards`
-          )}
-        </span>
-      </div>
-      <div>
-        <h3>{deck.title}</h3>
-        <p>{courseName}</p>
-        <p>
-          {deck.documentId
-            ? "Generated from a document"
-            : "Your own questions & answers"}
-        </p>
-      </div>
+    <DeckSurface
+      badge={
+        <>
+          <span className="fc-icon">
+            <Layers size={22} />
+          </span>
+          <span className="fc-label">
+            {query.isPending ? (
+              <SkeletonText>10 cards</SkeletonText>
+            ) : (
+              `${query.data?.length ?? 0} cards`
+            )}
+          </span>
+        </>
+      }
+      actions={
+        <div className="fc-deck-buttons">
+          <button
+            className="button primary"
+            disabled={!query.data?.length}
+            onClick={() => onSelect(deck.id, true)}
+          >
+            Study deck <ArrowRight size={16} />
+          </button>
+          <button className="button" onClick={() => onSelect(deck.id, false)}>
+            Manage
+          </button>
+        </div>
+      }
+    >
+      <h3>{deck.title}</h3>
+      <p>{courseName}</p>
+      <p>
+        {deck.documentId
+          ? "Generated from a document"
+          : "Your own questions & answers"}
+      </p>
       {query.error && <QueryState error={query.error} retry={query.refetch} />}
-      <div className="fc-row">
-        <button
-          className="button primary"
-          disabled={!query.data?.length}
-          onClick={() => onSelect(deck.id, true)}
-        >
-          Study deck <ArrowRight size={16} />
-        </button>
-        <button className="button" onClick={() => onSelect(deck.id, false)}>
-          Manage
-        </button>
-      </div>
-    </article>
+    </DeckSurface>
   );
 };
 
@@ -150,7 +157,7 @@ const FlashcardsPage = () => {
   };
   const saving = create.isPending || generate.isPending;
   return (
-    <div className="fc-page">
+    <div className="fc-page study-page">
       <PageHeading
         title="Flashcards"
         description="Create your own cards or turn your notes into a practice deck."
@@ -333,15 +340,14 @@ const FlashcardsPage = () => {
         (!selected ? (
           <>
             <div className="toolbar">
-              <div className="search-field">
-                <Search size={18} />
+              <SearchField>
                 <input
                   aria-label="Search decks"
                   placeholder="Search your decks…"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                 />
-              </div>
+              </SearchField>
               <select
                 aria-label="Filter decks by course"
                 value={filter}
@@ -399,7 +405,13 @@ const FlashcardsPage = () => {
             <div className="fc-row section-heading">
               <div>
                 <h2>{selected.title}</h2>
-                <p className="fc-note">{cardQuery.data?.length ?? 0} cards</p>
+                <p className="fc-note">
+                  {cardQuery.isPending ? (
+                    <SkeletonText>10 cards</SkeletonText>
+                  ) : (
+                    `${cardQuery.data?.length ?? 0} cards`
+                  )}
+                </p>
               </div>
               <div className="inline-actions">
                 <button
@@ -427,6 +439,13 @@ const FlashcardsPage = () => {
             </div>
             <QueryState
               pending={cardQuery.isPending}
+              skeleton={
+                reviewing ? (
+                  <FlashcardReview loading cards={[]} />
+                ) : (
+                  <FlashcardListSkeleton />
+                )
+              }
               error={cardQuery.error}
               retry={cardQuery.refetch}
             />

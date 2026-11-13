@@ -57,4 +57,4 @@ The current build has TypeScript errors in the unfinished study API and referenc
 
 ## Spotify
 
-The focus timer includes a Spotify music panel with an embedded player and optional currently-playing integration. See [Spotify setup and API contract](docs/spotify.md) for application registration, PKCE authorization, redirect requirements, and verification.
+The focus timer offers Spotify, YouTube Music, and Apple Music players. Paste a share link to load an embedded player; playback availability depends on the service and content. Switching services closes the current player. Spotify also offers a music panel with an embedded player and optional currently-playing integration. See [Spotify setup and API contract](docs/spotify.md) for application registration, PKCE authorization, redirect requirements, and verification.
